@@ -5,14 +5,11 @@
  */
 package cpscorereport;
 
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
@@ -26,65 +23,33 @@ import javafx.stage.Stage;
 public class CPscorereport extends Application {
 
     @Override
-    public void start(Stage mainWin) {
+    public void start(Stage mainWin) throws FileNotFoundException {
 
-        MenuBar menuBar = new MenuBar();
-        Menu fileMenu = new Menu("File");
-        
-        MenuItem startServer = new MenuItem("Start Server");
-        startServer.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                System.out.println("Server started!");
-            }
-        });
-        
-        MenuItem stopServer = new MenuItem("Stop Server");
-        stopServer.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                System.out.println("Server stopped!");
-            }
-        });
-        
-        MenuItem export = new MenuItem("Export to xls");
-        export.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                System.out.println("Exported!");
-            }
-        });
-        
-        MenuItem quit = new MenuItem("Exit");
-        quit.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                System.exit(0);
-            }
-        });
+        // Get the menu
+        MenuBar menuBar = GUIHelper.getMenu();
 
-        fileMenu.getItems().addAll(startServer, stopServer, export, quit);
-        menuBar.getMenus().addAll(fileMenu);
-        
-        
+        // Get the list of teams
+        ArrayList<Team> teams = new ArrayList<>();
+        GUIHelper.updateScores(teams);
+
+        // Get tabs
         TabPane teamTabs = new TabPane();
-        Tab[] teamTabList = new Tab[2];
-        for (int i = 0; i < teamTabList.length; i++){
+        Tab[] teamTabList = new Tab[teams.size() + 1];
+        for (int i = 1; i < teamTabList.length; i++) {
             teamTabList[i] = new Tab();
-        }
-        for (int i = 0; i < teamTabList.length; i++){
-            teamTabList[i].setText("Team" + i);
+            teamTabList[i].setText(teams.get(i).getTeamName());
             teamTabs.getTabs().add(teamTabList[i]);
         }
-        
-        
-        
+        teamTabList[0] = new Tab();
+        teamTabList[0].setText("All teams");
+        teamTabs.getTabs().add(teamTabList[0]);
+
         BorderPane borderPane = new BorderPane();
         borderPane.setTop(menuBar);
-        
+
         StackPane elementSect = new StackPane();
         elementSect.getChildren().add(teamTabs);
-        
+
         borderPane.setCenter(elementSect);
 
         Scene scene = new Scene(borderPane, 1366, 720);
