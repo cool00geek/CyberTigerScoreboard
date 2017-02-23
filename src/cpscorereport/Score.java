@@ -4,11 +4,13 @@ package cpscorereport;
 public class Score implements Comparable {
 
     private String myTime;
+    private int myTimeSec;
     private int myScore;
 
     public Score(String time, int score) {
         myTime = time;
         myScore = score;
+        myTimeSec = Integer.parseInt(time);
     }
 
     public void setTime(String time) {
@@ -21,6 +23,10 @@ public class Score implements Comparable {
 
     public String getTime() {
         return myTime;
+    }
+    
+    public int getTimeInt() {
+        return myTimeSec;
     }
 
     public int getScore() {

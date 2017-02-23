@@ -13,9 +13,13 @@ import java.util.Scanner;
 import java.util.TreeSet;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.text.Text;
 
 /**
  *
@@ -23,7 +27,7 @@ import javafx.scene.control.MenuItem;
  */
 public class GUIHelper {
 
-    public static MenuBar getMenu() {
+    public static MenuBar getMenu(Text textbox) {
         MenuBar menuBar = new MenuBar();
         Menu fileMenu = new Menu("File");
         Menu helpMenu = new Menu("Help");
@@ -32,7 +36,8 @@ public class GUIHelper {
         startServer.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
-                System.out.println("Server started!");
+                //System.out.println("Server started!");
+                textbox.setText(ServerHelper.startServer());
             }
         });
 
@@ -40,7 +45,7 @@ public class GUIHelper {
         stopServer.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
-                System.out.println("Server stopped!");
+                textbox.setText(ServerHelper.stopServer());
             }
         });
 
@@ -48,7 +53,8 @@ public class GUIHelper {
         export.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
-                System.out.println("Exported!");
+                ServerHelper.exportToExcel(textbox);
+                //textbox.setText("Exported!");
             }
         });
 
@@ -59,12 +65,20 @@ public class GUIHelper {
                 System.exit(0);
             }
         });
-        
+
         MenuItem about = new MenuItem("About...");
         about.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
-                System.out.println("Created by @billwi and @hexalellogram for the VHS CyberPatriot team!\nShoutout to Mr. Osborne for running CyberPatriot, Irvin for guiding us, and Mr. Parker for giving us the knowledge to run this!\n\nThis is licensed under the GNU/GPL V3 Public license!");
+                //System.out.println("Created by @billwi and @hexalellogram for the VHS CyberPatriot team!\nShoutout to Mr. Osborne for running CyberPatriot, Irvin for guiding us, and Mr. Parker for giving us the knowledge to run this!\n\nThis is licensed under the GNU/GPL V3 Public license!");
+                Dialog aboutDiag = new Dialog();
+                aboutDiag.setContentText("Created by @billwi and @hexalellogram for the VHS CyberPatriot team!\nShoutout to Mr. Osborne for running CyberPatriot, Irvin for guiding us, and Mr. Parker for giving us the knowledge to run this!\n\nThis is licensed under the GNU/GPL V3 Public license!");
+                aboutDiag.setTitle("About CPScoreboard");
+                aboutDiag.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+                Node closeButton = aboutDiag.getDialogPane().lookupButton(ButtonType.CLOSE);
+                closeButton.managedProperty().bind(closeButton.visibleProperty());
+                closeButton.setVisible(false);
+                aboutDiag.showAndWait();
             }
         });
 
