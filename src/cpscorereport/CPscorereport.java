@@ -45,30 +45,38 @@ public class CPscorereport extends Application {
         TabPane teamTabs = new TabPane();
         Tab[] teamTabList = new Tab[teams.size() + 1];
         XYChart.Series[] scoreSeries = new XYChart.Series[teams.size()];
+        LineChart[] charts = new LineChart[scoreSeries.length];
         for (int i = 1; i < teamTabList.length; i++) {
             // Configure tab
             teamTabList[i] = new Tab();
-            teamTabList[i].setText(teams.get(i).getTeamName());
+            teamTabList[i].setText(teams.get(i-1).getTeamName());
             teamTabList[i].setClosable(false);
+            teamTabs.getTabs().add(teamTabList[i]);
 
             // COnfigure tab contents
             NumberAxis xAx = new NumberAxis();
             xAx.setLabel("Running Time");
             NumberAxis yAx = new NumberAxis();
             yAx.setLabel("Points");
+            
             LineChart chart1 = new LineChart(xAx, yAx);
-            chart1.setTitle("Scoreboard: Team " + teams.get(i).getTeamName());
+            charts[i-1] = chart1;
+            charts[i-1].setTitle("Scoreboard: Team " + teams.get(i-1).getTeamName());
+            
             XYChart.Series series1 = new XYChart.Series();
-            series1.setName("Scores for team " + teams.get(i).getTeamName());
-            ArrayList<Score> scores = teams.get(i).getScores();
+            series1.setName("Scores for team " + teams.get(i-1).getTeamName());
+            
+            ArrayList<Score> scores = teams.get(i-1).getScores();
+            
             for (int j = 0; j < scores.size(); j++) {
-                series1.getData().add(new XYChart.Data(scores.get(i).getTimeInt(), scores.get(i).getScore()));
+                series1.getData().add(new XYChart.Data(scores.get(j).getTimeInt(), scores.get(j).getScore()));
             }
+            
             scoreSeries[i-1] = series1;
             
-            chart1.getData().add(series1);
-
-            teamTabs.getTabs().add(teamTabList[i]);
+            charts[i-1].getData().add(scoreSeries[i-1]);
+            teamTabList[i].setContent(charts[i-1]);
+             
         }
 
         // Configure all teams tab
@@ -81,10 +89,11 @@ public class CPscorereport extends Application {
         NumberAxis yAx = new NumberAxis();
         yAx.setLabel("Points");
         LineChart allChart = new LineChart(xAx, yAx);
-        allChart.setTitle("Scoreboard: All Team");
-        for (int i = 0; i < scoreSeries.length; i++){
-            allChart.getData().add(scoreSeries[i]);
+        allChart.setTitle("Scoreboard: All Teams");
+        for (XYChart.Series scoreSerie : scoreSeries) {
+            allChart.getData().add(scoreSerie);
         }
+        teamTabList[0].setContent(allChart);
         
         // Configure border (menu bar) and add main pane
         BorderPane borderPane = new BorderPane();

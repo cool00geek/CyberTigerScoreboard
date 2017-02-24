@@ -92,18 +92,20 @@ public class GUIHelper {
     public static void updateScores(ArrayList<Team> teams) {
         Scanner inFile;
         try {
-            inFile = new Scanner(new File("rawData.txt"));
+            inFile = new Scanner(new File("D:/rawData.txt"));
             while (inFile.hasNextLine()) {
-                String teamname = inFile.next();
-                int score = inFile.nextInt();
+                String L1 = inFile.nextLine();
                 String time = inFile.nextLine();
+                String[] line1 = L1.split(" ");
+                String teamname = line1[0];
+                int score = Integer.parseInt(line1[1]);
                 int loc = -1;
                 for (int i = 0; i < teams.size(); i++) {
                     if (teams.get(i).getTeamName().equals(teamname)) {
                         loc = i;
                     }
                 }
-                if (loc != -1) {
+                if (loc == -1) {
                     teams.add(new Team(teamname, new Score(time, score)));
                 } else {
                     teams.get(loc).addScore(new Score(time, score));
