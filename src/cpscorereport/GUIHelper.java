@@ -27,7 +27,13 @@ import javafx.scene.text.Text;
  */
 public class GUIHelper {
 
-    public static MenuBar getMenu(Text textbox) {
+    Thread server;
+
+    public GUIHelper() {
+        server = null;
+    }
+
+    public MenuBar getMenu(Text textbox) {
         MenuBar menuBar = new MenuBar();
         Menu fileMenu = new Menu("File");
         Menu helpMenu = new Menu("Help");
@@ -36,8 +42,9 @@ public class GUIHelper {
         startServer.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
-                //System.out.println("Server started!");
-                textbox.setText(ServerHelper.startServer());
+                textbox.setText("Starting server...");
+                server = ServerHelper.startServer();
+                textbox.setText("Server started!");
             }
         });
 
@@ -45,7 +52,9 @@ public class GUIHelper {
         stopServer.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
-                textbox.setText(ServerHelper.stopServer());
+                textbox.setText("Stopping server...");
+                ServerHelper.stopServer(server);
+                textbox.setText("Server stopped!");
             }
         });
 
@@ -70,10 +79,9 @@ public class GUIHelper {
         about.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
-                //System.out.println("Created by @billwi and @hexalellogram for the VHS CyberPatriot team!\nShoutout to Mr. Osborne for running CyberPatriot, Irvin for guiding us, and Mr. Parker for giving us the knowledge to run this!\n\nThis is licensed under the GNU/GPL V3 Public license!");
                 Dialog aboutDiag = new Dialog();
-                aboutDiag.setContentText("Created by @billwi and @hexalellogram for the VHS CyberPatriot team!\nShoutout to Mr. Osborne for running CyberPatriot, Irvin for guiding us, and Mr. Parker for giving us the knowledge to run this!\n\nThis is licensed under the GNU/GPL V3 Public license!");
-                aboutDiag.setTitle("About CPScoreboard");
+                aboutDiag.setContentText("Created by @billwi and @hexalellogram for the VHS CyberPatriot team!\nShoutout to Mr. Osborne for running CyberPatriot, Irvin for guiding us, and Mr. Parker for giving us the knowledge to create this scoreboard!\n\nThis is licensed under the GNU/GPL V3 Public license!");
+                aboutDiag.setTitle("About CyberTiger Scoreboard");
                 aboutDiag.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
                 Node closeButton = aboutDiag.getDialogPane().lookupButton(ButtonType.CLOSE);
                 closeButton.managedProperty().bind(closeButton.visibleProperty());
@@ -89,7 +97,7 @@ public class GUIHelper {
         return menuBar;
     }
 
-    public static void updateScores(ArrayList<Team> teams) {
+    public void updateScores(ArrayList<Team> teams) {
         Scanner inFile;
         try {
             inFile = new Scanner(new File("D:/rawData.txt"));

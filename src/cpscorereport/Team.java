@@ -1,6 +1,5 @@
 package cpscorereport;
 
-
 import java.util.ArrayList;
 
 public class Team implements Comparable {
@@ -47,13 +46,7 @@ public class Team implements Comparable {
 
     @Override
     public int compareTo(Object other) {
-        Score otherTeam = ((Team)other).getLatestScore();
-        if (otherTeam.getScore() < this.getLatestScore().getScore()) {
-            return 1;
-        } else if (otherTeam.getScore() == this.getLatestScore().getScore()) {
-            return 0;
-        } else {
-            return -1;
-        }
+        Score otherTeam = ((Team) other).getLatestScore();
+        return this.getLatestScore().getScore() - otherTeam.getScore();
     }
 }

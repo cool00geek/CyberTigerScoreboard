@@ -1,6 +1,5 @@
 package cpscorereport;
 
-
 public class Score implements Comparable {
 
     private String myTime;
@@ -24,7 +23,7 @@ public class Score implements Comparable {
     public String getTime() {
         return myTime;
     }
-    
+
     public int getTimeInt() {
         return myTimeSec;
     }
@@ -35,7 +34,7 @@ public class Score implements Comparable {
 
     @Override
     public int compareTo(Object other) {
-        return this.getScore() - ((Score)other).getScore();
+        return this.getScore() - ((Score) other).getScore();
     }
 
     @Override
