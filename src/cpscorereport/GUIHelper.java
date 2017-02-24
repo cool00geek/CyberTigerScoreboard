@@ -100,12 +100,15 @@ public class GUIHelper {
     public void updateScores(ArrayList<Team> teams) {
         Scanner inFile;
         try {
-            inFile = new Scanner(new File("D:/rawData.txt"));
+            inFile = new Scanner(new File("W:/rawData.txt"));
             while (inFile.hasNextLine()) {
                 String L1 = inFile.nextLine();
                 String time = inFile.nextLine();
                 String[] line1 = L1.split(" ");
                 String teamname = line1[0];
+                String[] name = teamname.split("-");
+                teamname = name[0];
+                String OS = name[1];
                 int score = Integer.parseInt(line1[1]);
                 int loc = -1;
                 for (int i = 0; i < teams.size(); i++) {
@@ -114,9 +117,9 @@ public class GUIHelper {
                     }
                 }
                 if (loc == -1) {
-                    teams.add(new Team(teamname, new Score(time, score)));
+                    teams.add(new Team(teamname, new Score(time, score), OS));
                 } else {
-                    teams.get(loc).addScore(new Score(time, score));
+                    teams.get(loc).addScore(new Score(time, score), OS);
                 }
             }
         } catch (FileNotFoundException e) {

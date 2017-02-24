@@ -34,57 +34,76 @@ public class CPscorereport extends Application {
         Text info = new Text("Server stopped!");
         info.setFont(new Font(20));
 
-        // Get the menu
+        // Get the menubar
         GUIHelper help = new GUIHelper();
         MenuBar menuBar = help.getMenu(info);
 
         // Get the list of teams
         ArrayList<Team> teams = new ArrayList<>();
-        help.updateScores(teams);
+        help.updateScores(teams); //Update the scores
 
         // Get tabs
-        TabPane teamTabs = new TabPane();
-        Tab[] teamTabList = new Tab[teams.size() + 1];
-        XYChart.Series[] scoreSeries = new XYChart.Series[teams.size()];
-        LineChart[] charts = new LineChart[scoreSeries.length];
+        TabPane teamTabs = new TabPane(); //Create the tab pane
+        Tab[] teamTabList = new Tab[teams.size() + 1]; // Create some tabs with the total teams and one for all teams
+
+        // Get all the OSes
+        int totalOSes = 0;
+        for (Team team : teams) {
+            totalOSes += team.getTotalOS();
+        }
+
+        XYChart.Series[] scoreSeries = new XYChart.Series[totalOSes]; // Create array for a lot of series
+        LineChart[] charts = new LineChart[teamTabList.length]; // Create a chart for each team
+
+        int seriesPos = 0;
+
         for (int i = 1; i < teamTabList.length; i++) {
+
             // Configure tab
             teamTabList[i] = new Tab();
             teamTabList[i].setText(teams.get(i - 1).getTeamName());
             teamTabList[i].setClosable(false);
-            teamTabs.getTabs().add(teamTabList[i]);
 
             // COnfigure tab contents
-            NumberAxis xAx = new NumberAxis();
-            xAx.setLabel("Running Time");
-            NumberAxis yAx = new NumberAxis();
-            yAx.setLabel("Points");
+            // X Axis
+            NumberAxis timeAxis = new NumberAxis();
+            timeAxis.setLabel("Running Time");
 
-            LineChart chart1 = new LineChart(xAx, yAx);
-            charts[i - 1] = chart1;
-            charts[i - 1].setTitle("Scoreboard: Team " + teams.get(i - 1).getTeamName());
+            // Y Axis
+            NumberAxis pointsAxis = new NumberAxis();
+            pointsAxis.setLabel("Points");
 
-            XYChart.Series series1 = new XYChart.Series();
-            series1.setName("Scores for team " + teams.get(i - 1).getTeamName());
+            // Create chart
+            LineChart chart1 = new LineChart(timeAxis, pointsAxis);
+            charts[i] = chart1;
+            charts[i].setTitle("Scoreboard: Team " + teams.get(i - 1).getTeamName());
 
-            ArrayList<Score> scores = teams.get(i - 1).getScores();
+            // Create a series
+            for (int j = 0; j < teams.get(i - 1).getTotalOS(); j++) {
 
-            for (int j = 0; j < scores.size(); j++) {
-                series1.getData().add(new XYChart.Data(scores.get(j).getTimeInt(), scores.get(j).getScore()));
+                ArrayList<ArrayList<Score>> allScores = teams.get(i - 1).getScores();
+                for (ArrayList<Score> scores : allScores) {
+                    System.out.println("All scores size is " + allScores.size());
+                    System.out.println(" Current pos is " + seriesPos);
+                    System.out.println("The length is " + scoreSeries.length);
+                    scoreSeries[seriesPos] = new XYChart.Series();
+                    scoreSeries[seriesPos].setName("Scores for team " + teams.get(i - 1).getTeamName());
+                    for (int k = 0; k < scores.size(); k++) {
+                        int time = scores.get(k).getTimeInt();
+                        int score = scores.get(k).getScore();
+                        scoreSeries[seriesPos].getData().add(new XYChart.Data(time, score));
+                    }
+                    charts[i].getData().add(scoreSeries[seriesPos]);
+                    seriesPos++;
+                }
             }
-
-            scoreSeries[i - 1] = series1;
-
-            charts[i - 1].getData().add(scoreSeries[i - 1]);
-            teamTabList[i].setContent(charts[i - 1]);
-
+            teamTabList[i].setContent(charts[i]);
         }
 
         // Configure all teams tab
         teamTabList[0] = new Tab();
         teamTabList[0].setText("All teams");
         teamTabList[0].setClosable(false);
-        teamTabs.getTabs().add(teamTabList[0]);
         NumberAxis xAx = new NumberAxis();
         xAx.setLabel("Running Time");
         NumberAxis yAx = new NumberAxis();
@@ -95,6 +114,11 @@ public class CPscorereport extends Application {
             allChart.getData().add(scoreSerie);
         }
         teamTabList[0].setContent(allChart);
+
+        // Make all tabs visible
+        for (Tab tab : teamTabList) {
+            teamTabs.getTabs().add(tab);
+        }
 
         // Configure border (menu bar) and add main pane
         BorderPane borderPane = new BorderPane();
