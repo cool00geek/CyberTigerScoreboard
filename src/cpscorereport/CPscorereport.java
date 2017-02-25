@@ -51,7 +51,7 @@ public class CPscorereport extends Application {
         for (Team team : teams) {
             totalOSes += team.getTotalOS();
         }
-
+        
         XYChart.Series[] scoreSeries = new XYChart.Series[totalOSes]; // Create array for a lot of series
         LineChart[] charts = new LineChart[teamTabList.length]; // Create a chart for each team
 
@@ -79,15 +79,13 @@ public class CPscorereport extends Application {
             charts[i].setTitle("Scoreboard: Team " + teams.get(i - 1).getTeamName());
 
             // Create a series
-            for (int j = 0; j < teams.get(i - 1).getTotalOS(); j++) {
 
                 ArrayList<ArrayList<Score>> allScores = teams.get(i - 1).getScores();
-                for (ArrayList<Score> scores : allScores) {
-                    System.out.println("All scores size is " + allScores.size());
-                    System.out.println(" Current pos is " + seriesPos);
-                    System.out.println("The length is " + scoreSeries.length);
+                ArrayList<String> OSName = teams.get(i - 1).getOSes();
+                for (int sumenum = 0; sumenum < allScores.size(); sumenum++){
+                    ArrayList<Score> scores = allScores.get(sumenum);
                     scoreSeries[seriesPos] = new XYChart.Series();
-                    scoreSeries[seriesPos].setName("Scores for team " + teams.get(i - 1).getTeamName());
+                    scoreSeries[seriesPos].setName("Scores for team " + teams.get(i - 1).getTeamName() + " " + OSName.get(sumenum));
                     for (int k = 0; k < scores.size(); k++) {
                         int time = scores.get(k).getTimeInt();
                         int score = scores.get(k).getScore();
@@ -96,7 +94,7 @@ public class CPscorereport extends Application {
                     charts[i].getData().add(scoreSeries[seriesPos]);
                     seriesPos++;
                 }
-            }
+            //}
             teamTabList[i].setContent(charts[i]);
         }
 

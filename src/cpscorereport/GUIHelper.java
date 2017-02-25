@@ -100,16 +100,17 @@ public class GUIHelper {
     public void updateScores(ArrayList<Team> teams) {
         Scanner inFile;
         try {
-            inFile = new Scanner(new File("W:/rawData.txt"));
+            inFile = new Scanner(new File("D:/rawData.txt"));
             while (inFile.hasNextLine()) {
                 String L1 = inFile.nextLine();
-                String time = inFile.nextLine();
                 String[] line1 = L1.split(" ");
                 String teamname = line1[0];
+                int score = Integer.parseInt(line1[1]);
+                String time = line1[2];
                 String[] name = teamname.split("-");
                 teamname = name[0];
                 String OS = name[1];
-                int score = Integer.parseInt(line1[1]);
+                
                 int loc = -1;
                 for (int i = 0; i < teams.size(); i++) {
                     if (teams.get(i).getTeamName().equals(teamname)) {
