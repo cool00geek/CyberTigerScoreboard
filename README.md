@@ -8,7 +8,11 @@ This was created to allow students at my High School to better prepare for the C
 Have the local firewall allow traffic through port 1947. It can be on a local intranet or internet. The client (images) have to send tcp data to that port (can be done with netcat, powershell, many things), in the format of `hostname score`. The hostname can be any way to identify a particular user, such as team name. It is strictly for display purposes on the graph.
 
 ## Pics
+### Mockup
 ![Mockup](/res/mockup.png)
-
+### Working all teams display
+![Mockup](/res/AllTeams.png)
+### Working specific team display
+![Mockup](/res/MultiOSOneTeam.png)
 
 GNU/GPL V3 license
