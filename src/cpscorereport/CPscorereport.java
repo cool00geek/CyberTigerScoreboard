@@ -83,15 +83,18 @@ public class CPscorereport extends Application {
                 ArrayList<ArrayList<Score>> allScores = teams.get(i - 1).getScores();
                 ArrayList<String> OSName = teams.get(i - 1).getOSes();
                 for (int sumenum = 0; sumenum < allScores.size(); sumenum++){
+                    XYChart.Series thisSeries = new XYChart.Series();
                     ArrayList<Score> scores = allScores.get(sumenum);
                     scoreSeries[seriesPos] = new XYChart.Series();
+                    thisSeries.setName("Scores for team " + teams.get(i - 1).getTeamName() + " " + OSName.get(sumenum));
                     scoreSeries[seriesPos].setName("Scores for team " + teams.get(i - 1).getTeamName() + " " + OSName.get(sumenum));
                     for (int k = 0; k < scores.size(); k++) {
                         int time = scores.get(k).getTimeInt();
                         int score = scores.get(k).getScore();
                         scoreSeries[seriesPos].getData().add(new XYChart.Data(time, score));
+                        thisSeries.getData().add(new XYChart.Data(time, score));
                     }
-                    charts[i].getData().add(scoreSeries[seriesPos]);
+                    charts[i].getData().add(thisSeries);
                     seriesPos++;
                 }
             //}
