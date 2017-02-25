@@ -110,7 +110,7 @@ public class GUIHelper {
                 String[] name = teamname.split("-");
                 teamname = name[0];
                 String OS = name[1];
-                
+
                 int loc = -1;
                 for (int i = 0; i < teams.size(); i++) {
                     if (teams.get(i).getTeamName().equals(teamname)) {
