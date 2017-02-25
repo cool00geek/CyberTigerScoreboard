@@ -5,12 +5,10 @@
  */
 package cpscorereport;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.TreeSet;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -36,6 +34,7 @@ public class GUIHelper {
     public MenuBar getMenu(Text textbox) {
         MenuBar menuBar = new MenuBar();
         Menu fileMenu = new Menu("File");
+        Menu serverMenu = new Menu("Server");
         Menu helpMenu = new Menu("Help");
 
         MenuItem startServer = new MenuItem("Start Server");
@@ -90,9 +89,10 @@ public class GUIHelper {
             }
         });
 
-        fileMenu.getItems().addAll(startServer, stopServer, export, quit);
+        fileMenu.getItems().addAll(export, quit);
+        serverMenu.getItems().addAll(startServer, stopServer);
         helpMenu.getItems().addAll(about);
-        menuBar.getMenus().addAll(fileMenu, helpMenu);
+        menuBar.getMenus().addAll(fileMenu, serverMenu, helpMenu);
 
         return menuBar;
     }
