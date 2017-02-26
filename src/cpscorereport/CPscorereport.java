@@ -41,7 +41,8 @@ public class CPscorereport extends Application {
         info.setFont(new Font(20));
 
         // Get the menubar
-        GUIHelper help = new GUIHelper("rawData.txt");
+        String filename = "rawData.txt";
+        GUIHelper help = new GUIHelper(filename);
         MenuBar menuBar = help.getMenu(info);
         ArrayList<Team> teams = new ArrayList<>();
 
@@ -63,7 +64,7 @@ public class CPscorereport extends Application {
             @Override
             public void handle(ActionEvent event) {
                 ArrayList<Team> teams = new ArrayList<>();
-                help.updateScores(teams); //Update the scores
+                help.updateScores(teams, filename); //Update the scores
 
                 // Get tabs
                 TabPane teamTabs = new TabPane(); //Create the tab pane
@@ -82,43 +83,46 @@ public class CPscorereport extends Application {
                 for (int i = 1; i < teamTabList.length; i++) {
 
                     // Configure tab
-                    teamTabList[i] = new Tab();
-                    teamTabList[i].setText(teams.get(i - 1).getTeamName());
-                    teamTabList[i].setClosable(false);
+                    System.out.println(teams.get(i - 1).getTeamName());
+                    //if (!teams.get(i - 1).getTeamName().contains("badTeamignore")) {
+                        teamTabList[i] = new Tab();
+                        teamTabList[i].setText(teams.get(i - 1).getTeamName());
+                        teamTabList[i].setClosable(false);
 
-                    // COnfigure tab contents
-                    // X Axis
-                    NumberAxis timeAxis = new NumberAxis();
-                    timeAxis.setLabel("Running Time");
+                        // COnfigure tab contents
+                        // X Axis
+                        NumberAxis timeAxis = new NumberAxis();
+                        timeAxis.setLabel("Running Time");
 
-                    // Y Axis
-                    NumberAxis pointsAxis = new NumberAxis();
-                    pointsAxis.setLabel("Points");
+                        // Y Axis
+                        NumberAxis pointsAxis = new NumberAxis();
+                        pointsAxis.setLabel("Points");
 
-                    // Create chart
-                    LineChart chart1 = new LineChart(timeAxis, pointsAxis);
-                    charts[i] = chart1;
-                    charts[i].setTitle("Scoreboard: Team " + teams.get(i - 1).getTeamName());
+                        // Create chart
+                        LineChart chart1 = new LineChart(timeAxis, pointsAxis);
+                        charts[i] = chart1;
+                        charts[i].setTitle("Scoreboard: Team " + teams.get(i - 1).getTeamName());
 
-                    // Create a series
-                    ArrayList<ArrayList<Score>> allScores = teams.get(i - 1).getScores();
-                    ArrayList<String> OSName = teams.get(i - 1).getOSes();
-                    for (int sumenum = 0; sumenum < allScores.size(); sumenum++) {
-                        XYChart.Series thisSeries = new XYChart.Series();
-                        ArrayList<Score> scores = allScores.get(sumenum);
-                        scoreSeries[seriesPos] = new XYChart.Series();
-                        thisSeries.setName("Scores for team " + teams.get(i - 1).getTeamName() + " " + OSName.get(sumenum));
-                        scoreSeries[seriesPos].setName("Scores for team " + teams.get(i - 1).getTeamName() + " " + OSName.get(sumenum));
-                        for (int k = 0; k < scores.size(); k++) {
-                            int time = scores.get(k).getTimeInt();
-                            int score = scores.get(k).getScore();
-                            scoreSeries[seriesPos].getData().add(new XYChart.Data(time, score));
-                            thisSeries.getData().add(new XYChart.Data(time, score));
-                        }
-                        charts[i].getData().add(thisSeries);
-                        seriesPos++;
+                        // Create a series
+                        ArrayList<ArrayList<Score>> allScores = teams.get(i - 1).getScores();
+                        ArrayList<String> OSName = teams.get(i - 1).getOSes();
+                        for (int sumenum = 0; sumenum < allScores.size(); sumenum++) {
+                            XYChart.Series thisSeries = new XYChart.Series();
+                            ArrayList<Score> scores = allScores.get(sumenum);
+                            scoreSeries[seriesPos] = new XYChart.Series();
+                            thisSeries.setName("Scores for team " + teams.get(i - 1).getTeamName() + " " + OSName.get(sumenum));
+                            scoreSeries[seriesPos].setName("Scores for team " + teams.get(i - 1).getTeamName() + " " + OSName.get(sumenum));
+                            for (int k = 0; k < scores.size(); k++) {
+                                int time = scores.get(k).getTimeInt();
+                                int score = scores.get(k).getScore();
+                                scoreSeries[seriesPos].getData().add(new XYChart.Data(time, score));
+                                thisSeries.getData().add(new XYChart.Data(time, score));
+                            }
+                            charts[i].getData().add(thisSeries);
+                            seriesPos++;
+                        //}
+                        teamTabList[i].setContent(charts[i]);
                     }
-                    teamTabList[i].setContent(charts[i]);
                 }
                 // Get the list of teams
                 // Configure all teams tab
@@ -145,7 +149,7 @@ public class CPscorereport extends Application {
                 // Add everything to the border
                 borderPane.setCenter(elementSect);
                 borderPane.setBottom(info);
-                
+
                 // Make sure the window is cool
                 Scene scene = new Scene(borderPane, 1366, 720);
 
@@ -157,7 +161,6 @@ public class CPscorereport extends Application {
         // Make it update every min
         fiveSecondsWonder.setCycleCount(Timeline.INDEFINITE);
         fiveSecondsWonder.play();
-
     }
 
     /**
@@ -166,5 +169,4 @@ public class CPscorereport extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-
 }

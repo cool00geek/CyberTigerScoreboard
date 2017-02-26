@@ -38,10 +38,10 @@ public class ServerHelper {
                             String cominginText;
                             try {
                                 cominginText = in.readLine();
+                                cominginText=cominginText.replaceAll("[^A-Za-z0-9 -]", "").trim();
                                 System.out.println(cominginText);
-                                String filename = "MyFile.txt";
                                 FileWriter appender = new FileWriter(fileName, true); //the true will append the new data
-                                appender.write(cominginText + "\n");//appends the string to the file
+                                appender.write("\r\n" + cominginText);//appends the string to the file
                                 appender.close();
                             } catch (IOException e) {
                                 System.out.println("System: " + "Connection to server lost!");

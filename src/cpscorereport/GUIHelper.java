@@ -67,8 +67,8 @@ public class GUIHelper {
                 if (result.isPresent()) {
                     try {
                         String res = result.get();
-                        if (res.contains("-")){
-                            res+="asd";
+                        if (res.contains("-")) {
+                            res += "asd";
                         }
                         int newPort = Integer.parseInt(res);
                         if (myPort != newPort) {
@@ -134,10 +134,11 @@ public class GUIHelper {
         return menuBar;
     }
 
-    public void updateScores(ArrayList<Team> teams) {
+    public void updateScores(ArrayList<Team> teams, String filename) {
         Scanner inFile;
         try {
-            inFile = new Scanner(new File("D:/rawData.txt"));
+            int line = 1;
+            inFile = new Scanner(new File(filename));
             while (inFile.hasNextLine()) {
                 String L1 = inFile.nextLine();
                 String[] line1 = L1.split(" ");
