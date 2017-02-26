@@ -13,6 +13,8 @@ import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
@@ -20,8 +22,13 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.TilePane;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -47,15 +54,30 @@ public class CPscorereport extends Application {
         ArrayList<Team> teams = new ArrayList<>();
 
         // Get the loading splash screen. 
-        Text loading1 = new Text("Opening CyberTiger Scoreboard...");
-        Text loading2 = new Text("\n\nIt may take over a minute. Please wait.");
-        Text loading3 = new Text("\n\n\n\nThe app is responding! Do not close it!");
+        Text loading1 = new Text("     Opening CyberTiger Scoreboard...\n   It may take over a minute. Please wait...\n   The app is responding! Do not close it!");
+        Text loading2 = new Text("\n\n\n");
+        Text loading3 = new Text("");
+
+        Image icon = new Image(CPscorereport.class.getResourceAsStream("/resources/icon.png"));
+        ImageView iconView = new ImageView();
+        iconView.setImage(icon);
+        iconView.setFitWidth(120);
+        iconView.setPreserveRatio(true);
+        iconView.setSmooth(true);
+        iconView.setCache(true);
+
         loading1.setFont(new Font(20));
         loading2.setFont(new Font(20));
         loading3.setFont(new Font(20));
-        StackPane tempLoader = new StackPane();
-        tempLoader.getChildren().addAll(loading1, loading2, loading3);
-        Scene loader = new Scene(tempLoader, 720, 720);
+        TilePane tempLoader = new TilePane();
+        tempLoader.setPrefRows(8);
+        tempLoader.getChildren().add(iconView);
+        TilePane.setAlignment(iconView, Pos.CENTER);
+        tempLoader.getChildren().add(loading1);
+        TilePane.setAlignment(loading1, Pos.CENTER);
+        
+        mainWin.getIcons().add(new Image(CPscorereport.class.getResourceAsStream("/resources/icon.png"))); 
+        Scene loader = new Scene(tempLoader, 380, 240);
         mainWin.setTitle("CyberTiger Scoreboard");
         mainWin.setScene(loader);
         mainWin.show();
@@ -85,41 +107,41 @@ public class CPscorereport extends Application {
                     // Configure tab
                     System.out.println(teams.get(i - 1).getTeamName());
                     //if (!teams.get(i - 1).getTeamName().contains("badTeamignore")) {
-                        teamTabList[i] = new Tab();
-                        teamTabList[i].setText(teams.get(i - 1).getTeamName());
-                        teamTabList[i].setClosable(false);
+                    teamTabList[i] = new Tab();
+                    teamTabList[i].setText(teams.get(i - 1).getTeamName());
+                    teamTabList[i].setClosable(false);
 
-                        // COnfigure tab contents
-                        // X Axis
-                        NumberAxis timeAxis = new NumberAxis();
-                        timeAxis.setLabel("Running Time");
+                    // COnfigure tab contents
+                    // X Axis
+                    NumberAxis timeAxis = new NumberAxis();
+                    timeAxis.setLabel("Running Time");
 
-                        // Y Axis
-                        NumberAxis pointsAxis = new NumberAxis();
-                        pointsAxis.setLabel("Points");
+                    // Y Axis
+                    NumberAxis pointsAxis = new NumberAxis();
+                    pointsAxis.setLabel("Points");
 
-                        // Create chart
-                        LineChart chart1 = new LineChart(timeAxis, pointsAxis);
-                        charts[i] = chart1;
-                        charts[i].setTitle("Scoreboard: Team " + teams.get(i - 1).getTeamName());
+                    // Create chart
+                    LineChart chart1 = new LineChart(timeAxis, pointsAxis);
+                    charts[i] = chart1;
+                    charts[i].setTitle("Scoreboard: Team " + teams.get(i - 1).getTeamName());
 
-                        // Create a series
-                        ArrayList<ArrayList<Score>> allScores = teams.get(i - 1).getScores();
-                        ArrayList<String> OSName = teams.get(i - 1).getOSes();
-                        for (int sumenum = 0; sumenum < allScores.size(); sumenum++) {
-                            XYChart.Series thisSeries = new XYChart.Series();
-                            ArrayList<Score> scores = allScores.get(sumenum);
-                            scoreSeries[seriesPos] = new XYChart.Series();
-                            thisSeries.setName("Scores for team " + teams.get(i - 1).getTeamName() + " " + OSName.get(sumenum));
-                            scoreSeries[seriesPos].setName("Scores for team " + teams.get(i - 1).getTeamName() + " " + OSName.get(sumenum));
-                            for (int k = 0; k < scores.size(); k++) {
-                                int time = scores.get(k).getTimeInt();
-                                int score = scores.get(k).getScore();
-                                scoreSeries[seriesPos].getData().add(new XYChart.Data(time, score));
-                                thisSeries.getData().add(new XYChart.Data(time, score));
-                            }
-                            charts[i].getData().add(thisSeries);
-                            seriesPos++;
+                    // Create a series
+                    ArrayList<ArrayList<Score>> allScores = teams.get(i - 1).getScores();
+                    ArrayList<String> OSName = teams.get(i - 1).getOSes();
+                    for (int sumenum = 0; sumenum < allScores.size(); sumenum++) {
+                        XYChart.Series thisSeries = new XYChart.Series();
+                        ArrayList<Score> scores = allScores.get(sumenum);
+                        scoreSeries[seriesPos] = new XYChart.Series();
+                        thisSeries.setName("Scores for team " + teams.get(i - 1).getTeamName() + " " + OSName.get(sumenum));
+                        scoreSeries[seriesPos].setName("Scores for team " + teams.get(i - 1).getTeamName() + " " + OSName.get(sumenum));
+                        for (int k = 0; k < scores.size(); k++) {
+                            int time = scores.get(k).getTimeInt();
+                            int score = scores.get(k).getScore();
+                            scoreSeries[seriesPos].getData().add(new XYChart.Data(time, score));
+                            thisSeries.getData().add(new XYChart.Data(time, score));
+                        }
+                        charts[i].getData().add(thisSeries);
+                        seriesPos++;
                         //}
                         teamTabList[i].setContent(charts[i]);
                     }

@@ -107,6 +107,7 @@ public class GUIHelper {
         quit.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
+                ServerHelper.stopServer(server);
                 System.exit(0);
             }
         });
