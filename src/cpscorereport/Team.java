@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Team implements Comparable {
 
-    private String myTeamName;
+    private final String myTeamName;
     private ArrayList<Score> myWindows1Scores;
     private String myWin1Name;
     private ArrayList<Score> myWindows2Scores;

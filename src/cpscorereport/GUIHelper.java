@@ -8,6 +8,7 @@ package cpscorereport;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.Scanner;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -17,6 +18,7 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.text.Text;
 
 /**
@@ -26,9 +28,13 @@ import javafx.scene.text.Text;
 public class GUIHelper {
 
     Thread server;
+    int myPort;
+    String myFilename;
 
-    public GUIHelper() {
+    public GUIHelper(String filename) {
         server = null;
+        myPort = 1947;
+        myFilename = filename;
     }
 
     public MenuBar getMenu(Text textbox) {
@@ -37,17 +43,48 @@ public class GUIHelper {
         Menu serverMenu = new Menu("Server");
         Menu helpMenu = new Menu("Help");
 
-        MenuItem startServer = new MenuItem("Start Server");
+        MenuItem startServer = new MenuItem("Start TCP Server");
         startServer.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
-                textbox.setText("Starting server...");
-                server = ServerHelper.startServer();
-                textbox.setText("Server started!");
+                textbox.setText("Starting server on port " + myPort + "...");
+                server = ServerHelper.startServer(myPort, myFilename);
+                textbox.setText("Server started on port " + myPort + "!");
             }
         });
 
-        MenuItem stopServer = new MenuItem("Stop Server");
+        MenuItem TCPServerConfig = new MenuItem("Configure TCP Server");
+        TCPServerConfig.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent t) {
+                TextInputDialog dialog = new TextInputDialog("" + myPort);
+                dialog.setTitle("TCP Port");
+                dialog.setHeaderText("Choose a custom TCP Port");
+                dialog.setContentText("Please enter the port of your choice:");
+
+                // Traditional way to get the response value.
+                Optional<String> result = dialog.showAndWait();
+                if (result.isPresent()) {
+                    try {
+                        String res = result.get();
+                        if (res.contains("-")){
+                            res+="asd";
+                        }
+                        int newPort = Integer.parseInt(res);
+                        if (myPort != newPort) {
+                            textbox.setText("Please restart the server to use port: " + newPort);
+                            myPort = newPort;
+                        } else {
+                            textbox.setText("Port unchanged! Still using " + newPort + ".");
+                        }
+                    } catch (NumberFormatException e) {
+                        textbox.setText(result.get() + " is not a valid port! Still using " + myPort);
+                    }
+                }
+            }
+        });
+
+        MenuItem stopServer = new MenuItem("Stop TCP Server");
         stopServer.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
@@ -90,7 +127,7 @@ public class GUIHelper {
         });
 
         fileMenu.getItems().addAll(export, quit);
-        serverMenu.getItems().addAll(startServer, stopServer);
+        serverMenu.getItems().addAll(startServer, TCPServerConfig, stopServer);
         helpMenu.getItems().addAll(about);
         menuBar.getMenus().addAll(fileMenu, serverMenu, helpMenu);
 

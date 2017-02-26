@@ -7,6 +7,7 @@ package cpscorereport;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -40,12 +41,25 @@ public class CPscorereport extends Application {
         info.setFont(new Font(20));
 
         // Get the menubar
-        GUIHelper help = new GUIHelper();
+        GUIHelper help = new GUIHelper("rawData.txt");
         MenuBar menuBar = help.getMenu(info);
         ArrayList<Team> teams = new ArrayList<>();
 
-        Timeline fiveSecondsWonder = new Timeline(new KeyFrame(Duration.seconds(60), new EventHandler<ActionEvent>() {
+        // Get the loading splash screen. 
+        Text loading1 = new Text("Opening CyberTiger Scoreboard...");
+        Text loading2 = new Text("\n\nIt may take over a minute. Please wait.");
+        Text loading3 = new Text("\n\n\n\nThe app is responding! Do not close it!");
+        loading1.setFont(new Font(20));
+        loading2.setFont(new Font(20));
+        loading3.setFont(new Font(20));
+        StackPane tempLoader = new StackPane();
+        tempLoader.getChildren().addAll(loading1, loading2, loading3);
+        Scene loader = new Scene(tempLoader, 720, 720);
+        mainWin.setTitle("CyberTiger Scoreboard");
+        mainWin.setScene(loader);
+        mainWin.show();
 
+        Timeline fiveSecondsWonder = new Timeline(new KeyFrame(Duration.seconds(60), new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 ArrayList<Team> teams = new ArrayList<>();
@@ -58,9 +72,7 @@ public class CPscorereport extends Application {
 
                 // Get all the OSes
                 int totalOSes = 0;
-                for (Team team : teams) {
-                    totalOSes += team.getTotalOS();
-                }
+                totalOSes = teams.stream().map((team) -> team.getTotalOS()).reduce(totalOSes, Integer::sum);
 
                 XYChart.Series[] scoreSeries = new XYChart.Series[totalOSes]; // Create array for a lot of series
                 LineChart[] charts = new LineChart[teamTabList.length]; // Create a chart for each team
@@ -106,7 +118,6 @@ public class CPscorereport extends Application {
                         charts[i].getData().add(thisSeries);
                         seriesPos++;
                     }
-                    //}
                     teamTabList[i].setContent(charts[i]);
                 }
                 // Get the list of teams
@@ -120,15 +131,11 @@ public class CPscorereport extends Application {
                 yAx.setLabel("Points");
                 LineChart allChart = new LineChart(xAx, yAx);
                 allChart.setTitle("Scoreboard: All Teams");
-                for (XYChart.Series scoreSerie : scoreSeries) {
-                    allChart.getData().add(scoreSerie);
-                }
+                allChart.getData().addAll(Arrays.asList(scoreSeries));
                 teamTabList[0].setContent(allChart);
 
                 // Make all tabs visible
-                for (Tab tab : teamTabList) {
-                    teamTabs.getTabs().add(tab);
-                }
+                teamTabs.getTabs().addAll(Arrays.asList(teamTabList));
                 BorderPane borderPane = new BorderPane();
                 borderPane.setTop(menuBar);
 
@@ -138,7 +145,8 @@ public class CPscorereport extends Application {
                 // Add everything to the border
                 borderPane.setCenter(elementSect);
                 borderPane.setBottom(info);
-
+                
+                // Make sure the window is cool
                 Scene scene = new Scene(borderPane, 1366, 720);
 
                 mainWin.setTitle("CyberTiger Scoreboard");
@@ -146,6 +154,7 @@ public class CPscorereport extends Application {
                 mainWin.show();
             }
         }));
+        // Make it update every min
         fiveSecondsWonder.setCycleCount(Timeline.INDEFINITE);
         fiveSecondsWonder.play();
 

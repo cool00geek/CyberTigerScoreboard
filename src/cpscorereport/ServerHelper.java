@@ -6,6 +6,7 @@
 package cpscorereport;
 
 import java.io.BufferedReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
@@ -22,7 +23,7 @@ import javafx.scene.text.Text;
  */
 public class ServerHelper {
 
-    public static Thread startServer() {
+    public static Thread startServer(int port, String fileName) {
         final Thread server = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -30,14 +31,18 @@ public class ServerHelper {
                     System.out.println("Server started!");
                     ServerSocket serverSocket;
                     try {
-                        serverSocket = new ServerSocket(1947);
+                        serverSocket = new ServerSocket(port);
                         Socket socket = serverSocket.accept();
                         BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                         while (true) {
-                            String cominginText = "";
+                            String cominginText;
                             try {
                                 cominginText = in.readLine();
                                 System.out.println(cominginText);
+                                String filename = "MyFile.txt";
+                                FileWriter appender = new FileWriter(fileName, true); //the true will append the new data
+                                appender.write(cominginText + "\n");//appends the string to the file
+                                appender.close();
                             } catch (IOException e) {
                                 System.out.println("System: " + "Connection to server lost!");
                             }

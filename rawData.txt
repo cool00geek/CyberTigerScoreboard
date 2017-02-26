@@ -1,0 +1,12 @@
+Matrix-Lin3 10 10
+Matrix-Lin3 15 15
+Matrix-Lin3 30 20
+Coexist-Win1 5 10
+Coexist-Lin4 8 10
+Coexist-Win1 15 20
+Coexist-Lin4 18 20
+N00b-Win1 0 10
+N00b-Win1 8 20
+Matrix-Lin3 40 20
+N00b-Win1 88 30
+N00b-Lin1 5 40
