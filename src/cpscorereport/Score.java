@@ -3,9 +3,13 @@ package cpscorereport;
 public class Score implements Comparable {
 
     private String myTime;
-    private int myTimeSec;
+    private final int myTimeSec;
     private int myScore;
 
+    /*
+    * @param time: The running time of the image
+    * @param score: The current score
+    */
     public Score(String time, int score) {
         myTime = time;
         myScore = score;

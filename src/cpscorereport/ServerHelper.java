@@ -1,7 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * GNU/GPL v3. Check out https://github.com/billwi/CyberTigerScoreboard for more info
  */
 package cpscorereport;
 
@@ -36,24 +34,20 @@ public class ServerHelper {
                         BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                         while (true) {
                             String cominginText;
-                            try {
-                                cominginText = in.readLine();
-                                cominginText=cominginText.replaceAll("[^A-Za-z0-9 -]", "").trim();
-                                System.out.println(cominginText);
-                                FileWriter appender = new FileWriter(fileName, true); //the true will append the new data
-                                appender.write("\r\n" + cominginText);//appends the string to the file
-                                appender.close();
-                            } catch (IOException e) {
-                                System.out.println("System: " + "Connection to server lost!");
-                            }
+                            cominginText = in.readLine();
+                            cominginText = cominginText.replaceAll("[^A-Za-z0-9 -]", "").trim();
+                            System.out.println(cominginText);
+                            FileWriter appender = new FileWriter(fileName, true);
+                            appender.write("\r\n" + cominginText);//appends the string to the file
+                            //appends the string to the file
                         }
                     } catch (IOException ex) {
                         System.out.println("An issue....");
                     }
-
                 }
             }
-        });
+        }
+        );
         server.start();
         return server;
     }
@@ -76,8 +70,10 @@ public class ServerHelper {
         // Do save stuff...
         try {
             Thread.sleep(5000);
+
         } catch (InterruptedException ex) {
-            Logger.getLogger(ServerHelper.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ServerHelper.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
         infoBox.setText("Saved as " + filename);
     }

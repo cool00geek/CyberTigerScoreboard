@@ -17,6 +17,7 @@ public class Team implements Comparable {
     private String myLin2Name;
     private ArrayList<Score> myLinux3Scores;
     private String myLin3Name;
+    private int myOSCount;
 
     public Team(ArrayList<Score> scores, String name, String OS) {
         if (OS.toLowerCase().contains("win")) {
@@ -27,10 +28,12 @@ public class Team implements Comparable {
             myLin1Name = OS;
         }
         myTeamName = name;
+        myOSCount = 1;
     }
 
     public Team(String name) {
         myTeamName = name;
+        myOSCount = 0;
     }
 
     public Team(String name, Score starting, String OS) {
@@ -44,6 +47,7 @@ public class Team implements Comparable {
             myLin1Name = OS;
         }
         myTeamName = name;
+        myOSCount = 1;
     }
 
     public void addScore(Score toAdd, String OS) {
@@ -58,14 +62,17 @@ public class Team implements Comparable {
                 myWindows1Scores = new ArrayList<>();
                 myWindows1Scores.add(toAdd);
                 myWin1Name = OS;
+                myOSCount++;
             } else if (myWin2Name == null) {
                 myWindows2Scores = new ArrayList<>();
                 myWindows2Scores.add(toAdd);
                 myWin2Name = OS;
+                myOSCount++;
             } else if (myWin3Name == null) {
                 myWindows3Scores = new ArrayList<>();
                 myWindows3Scores.add(toAdd);
                 myWin3Name = OS;
+                myOSCount++;
             }
         } else if (OS.toLowerCase().contains("lin")) {
             if (myLin1Name != null && OS.equals(myLin1Name)) {
@@ -78,14 +85,17 @@ public class Team implements Comparable {
                 myLinux1Scores = new ArrayList<>();
                 myLinux1Scores.add(toAdd);
                 myLin1Name = OS;
+                myOSCount++;
             } else if (myLin2Name == null) {
                 myLinux2Scores = new ArrayList<>();
                 myLinux2Scores.add(toAdd);
                 myLin2Name = OS;
+                myOSCount++;
             } else if (myLin3Name == null) {
                 myLinux3Scores = new ArrayList<>();
                 myLinux3Scores.add(toAdd);
                 myLin3Name = OS;
+                myOSCount++;
             }
         }
     }
@@ -116,46 +126,34 @@ public class Team implements Comparable {
 
     public ArrayList<ArrayList<Score>> getScores() {
         ArrayList<ArrayList<Score>> allScores = new ArrayList<>(this.getTotalOS());
-        if (myWindows1Scores != null) {
-            allScores.add(myWindows1Scores);
-        }
-        if (myWindows2Scores != null) {
-            allScores.add(myWindows2Scores);
-        }
-        if (myWindows3Scores != null) {
-            allScores.add(myWindows3Scores);
-        }
-        if (myLinux1Scores != null) {
-            allScores.add(myLinux1Scores);
-        }
-        if (myLinux2Scores != null) {
-            allScores.add(myLinux2Scores);
-        }
-        if (myLinux3Scores != null) {
-            allScores.add(myLinux3Scores);
+        allScores.add(myWindows1Scores);
+        allScores.add(myWindows2Scores);
+        allScores.add(myWindows3Scores);
+        allScores.add(myLinux1Scores);
+        allScores.add(myLinux2Scores);
+        allScores.add(myLinux3Scores);
+        for (int i = 0; i < allScores.size(); i++) {
+            if (allScores.get(i) == null) {
+                allScores.remove(i);
+                i--;
+            }
         }
         return allScores;
     }
 
     public ArrayList<String> getOSes() {
         ArrayList<String> allScores = new ArrayList<>(this.getTotalOS());
-        if (myWin1Name != null) {
-            allScores.add(myWin1Name);
-        }
-        if (myWin2Name != null) {
-            allScores.add(myWin2Name);
-        }
-        if (myWin3Name != null) {
-            allScores.add(myWin3Name);
-        }
-        if (myLin1Name != null) {
-            allScores.add(myLin1Name);
-        }
-        if (myLin2Name != null) {
-            allScores.add(myLin2Name);
-        }
-        if (myLin3Name != null) {
-            allScores.add(myLin3Name);
+        allScores.add(myWin1Name);
+        allScores.add(myWin2Name);
+        allScores.add(myWin3Name);
+        allScores.add(myLin1Name);
+        allScores.add(myLin2Name);
+        allScores.add(myLin3Name);
+        for (int i = 0; i < allScores.size(); i++) {
+            if (allScores.get(i) == null) {
+                allScores.remove(i);
+                i--;
+            }
         }
         return allScores;
     }
@@ -207,26 +205,7 @@ public class Team implements Comparable {
     }
 
     public int getTotalOS() {
-        int total = 0;
-        if (myWin1Name != null) {
-            total++;
-        }
-        if (myWin2Name != null) {
-            total++;
-        }
-        if (myWin3Name != null) {
-            total++;
-        }
-        if (myLin1Name != null) {
-            total++;
-        }
-        if (myLin2Name != null) {
-            total++;
-        }
-        if (myLin3Name != null) {
-            total++;
-        }
-        return total;
+        return myOSCount;
     }
 
     @Override
