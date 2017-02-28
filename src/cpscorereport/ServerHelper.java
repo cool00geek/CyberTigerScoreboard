@@ -27,9 +27,8 @@ public class ServerHelper {
             public void run() {
                 while (!Thread.interrupted()) {
                     System.out.println("Server started!");
-                    ServerSocket serverSocket;
                     try {
-                        serverSocket = new ServerSocket(port);
+                        ServerSocket serverSocket = new ServerSocket(port);
                         Socket socket = serverSocket.accept();
                         BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                         while (true) {
@@ -41,8 +40,9 @@ public class ServerHelper {
                             appender.write("\r\n" + cominginText);//appends the string to the file
                             //appends the string to the file
                         }
-                    } catch (IOException ex) {
+                    } catch (Exception ex) {
                         System.out.println("An issue....");
+                        return;
                     }
                 }
             }
@@ -53,6 +53,31 @@ public class ServerHelper {
     }
 
     public static void stopServer(Thread theServer) {
+        final Thread stopper = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("Stopping server...");
+                theServer.interrupt();
+            }
+        });
+        stopper.start();
+    }
+
+    public static Thread startJumpServer(String fileName) {
+        final Thread server = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (!Thread.interrupted()) {
+
+                }
+            }
+        }
+        );
+        server.start();
+        return server;
+    }
+
+    public static void stopJumpServer(Thread theServer) {
         final Thread stopper = new Thread(new Runnable() {
             @Override
             public void run() {

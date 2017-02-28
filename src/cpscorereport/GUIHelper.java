@@ -29,6 +29,7 @@ import javafx.scene.text.Text;
 public class GUIHelper {
 
     Thread myServerThread; //The thread with the running server
+    Thread myJumpServerThread; //The thread with the running jump server
     int myPort; //The port the server is running on
     String myFilename; // The filename of the file to read
 
@@ -97,6 +98,28 @@ public class GUIHelper {
                 System.out.println("Server stopped!");
             }
         });
+        
+        MenuItem startJump = new MenuItem("Start Jump Server");
+        stopServer.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent t) {
+                textbox.setText("Stopping server...");
+                myJumpServerThread = ServerHelper.startJumpServer(myFilename);
+                textbox.setText("Server stopped!");
+                System.out.println("Server stopped!");
+            }
+        });
+        
+        MenuItem stopJump = new MenuItem("Stop Jump Server");
+        stopServer.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent t) {
+                textbox.setText("Stopping server...");
+                ServerHelper.stopJumpServer(myJumpServerThread);
+                textbox.setText("Server stopped!");
+                System.out.println("Server stopped!");
+            }
+        });
 
         MenuItem export = new MenuItem("Export to xls");
         export.setOnAction(new EventHandler<ActionEvent>() {
@@ -131,7 +154,7 @@ public class GUIHelper {
         });
 
         fileMenu.getItems().addAll(export, quit);
-        serverMenu.getItems().addAll(startServer, TCPServerConfig, stopServer);
+        serverMenu.getItems().addAll(startServer, TCPServerConfig, stopServer, startJump, stopJump);
         helpMenu.getItems().addAll(about);
         menuBar.getMenus().addAll(fileMenu, serverMenu, helpMenu);
 
