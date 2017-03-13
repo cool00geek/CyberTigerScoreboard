@@ -28,10 +28,13 @@ import javafx.scene.text.Text;
  */
 public class GUIHelper {
 
-    Thread myServerThread; //The thread with the running server
-    Thread myJumpServerThread; //The thread with the running jump server
-    int myPort; //The port the server is running on
-    String myFilename; // The filename of the file to read
+    private Thread myServerThread; //The thread with the running server
+    private Thread myJumpServerThread; //The thread with the running jump server
+    private Thread myAzureServerThread; //The thread with the running Azure server
+    private int myPort; //The port the server is running on
+    private String myFilename; // The filename of the file to read
+    private final String myAzureDBUser = "";
+    private final String myAzureDBPass = "";
 
     public GUIHelper(String filename) {
         myServerThread = null;
@@ -116,6 +119,28 @@ public class GUIHelper {
             public void handle(ActionEvent t) {
                 textbox.setText("Stopping server...");
                 ServerHelper.stopJumpServer(myJumpServerThread);
+                textbox.setText("Server stopped!");
+                System.out.println("Server stopped!");
+            }
+        });
+        
+        MenuItem startAz = new MenuItem("Start Azure server");
+        stopServer.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent t) {
+                textbox.setText("Stopping server...");
+                myAzureServerThread = ServerHelper.startAzureServer(myFilename, myAzureDBUser, myAzureDBPass);
+                textbox.setText("Server stopped!");
+                System.out.println("Server stopped!");
+            }
+        });
+        
+        MenuItem stopAz = new MenuItem("Stop Azure server");
+        stopServer.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent t) {
+                textbox.setText("Stopping server...");
+                ServerHelper.stopAzureServer(myAzureServerThread);
                 textbox.setText("Server stopped!");
                 System.out.println("Server stopped!");
             }
