@@ -1,0 +1,12 @@
+C:\Users\Vinay\Desktop\CSDB\CSDB\bin\Debug\CSDB.exe.config
+C:\Users\Vinay\Desktop\CSDB\CSDB\bin\Debug\CSDB.exe
+C:\Users\Vinay\Desktop\CSDB\CSDB\bin\Debug\CSDB.pdb
+C:\Users\Vinay\Desktop\CSDB\CSDB\obj\Debug\CSDB.csprojResolveAssemblyReference.cache
+C:\Users\Vinay\Desktop\CSDB\CSDB\obj\Debug\CSDB.exe
+C:\Users\Vinay\Desktop\CSDB\CSDB\obj\Debug\CSDB.pdb
+D:\CPscoreboard\Clients\CSDB\CSDB\bin\Debug\CSDB.exe.config
+D:\CPscoreboard\Clients\CSDB\CSDB\obj\Debug\CSDB.exe
+D:\CPscoreboard\Clients\CSDB\CSDB\obj\Debug\CSDB.pdb
+D:\CPscoreboard\Clients\CSDB\CSDB\bin\Debug\CSDB.exe
+D:\CPscoreboard\Clients\CSDB\CSDB\bin\Debug\CSDB.pdb
+D:\CPscoreboard\Clients\CSDB\CSDB\obj\Debug\CSDB.csprojResolveAssemblyReference.cache
