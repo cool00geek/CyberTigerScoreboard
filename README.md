@@ -7,6 +7,12 @@ This was created to allow students at my High School to better prepare for the C
 ## Usage
 Have the local firewall allow traffic through port 1947. It can be on a local intranet or internet. The client (images) have to send tcp data to that port (can be done with netcat, powershell, many things), in the format of `hostname score`. The hostname can be any way to identify a particular user, such as team name. It is strictly for display purposes on the graph.
 
+OR  
+---------  
+You can setup an Azure server and use the Azure one! It connects with an Azure SQL server.
+
+
+
 ## Pics
 ### Mockup
 ![Mockup](/res/mockup.png)
