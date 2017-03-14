@@ -91,13 +91,6 @@ public class CPscorereport extends Application {
             public void handle(ActionEvent event) {
 
                 // Make sure dimensions don't change
-                if (refreshNum == 0) {
-                    //maximized = mainWin.isMaximized();
-                    //Rectangle2D visualBounds = Screen.getPrimary().getVisualBounds();
-                    //width = mainWin.getWidth();
-                    //height = mainWin.getHeight();
-                    //System.out.println("The width is " + width + "And the heigh is " + height);
-                }
 
                 //Update the scores
                 ArrayList<Team> teams = new ArrayList<>();

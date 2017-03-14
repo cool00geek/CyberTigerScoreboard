@@ -15,11 +15,6 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javafx.scene.text.Text;
 
 /**
  *
@@ -47,7 +42,7 @@ public class ServerHelper {
                             //appends the string to the file
                         }
                     } catch (IOException ex) {
-                        System.out.println("An issue....");
+                        System.out.println("An issue....\n" + ex);
                         return;
                     }
                 }
@@ -94,15 +89,15 @@ public class ServerHelper {
         stopper.start();
     }
 
-    public static Thread startAzureServer(String fileName, String username, String password) {
+    public static Thread startAzureServer(String fileName, String dbUrl, String dbName, String username, String password) {
         final Thread server = new Thread(new Runnable() {
             @Override
             public void run() {
+                System.out.println("Azure Server started!");
                 while (!Thread.interrupted()) {
-                    System.out.println("Azure Server started!");
                     try {
                         System.out.print("Attempting connection...");
-                        String url = "jdbc:sqlserver://ctsb.database.windows.net:1433;database=CPscores;user=" + username + "@ctsb;password=" + password + ";encrypt=true;trustServerCertificate=true;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
+                        String url = "jdbc:sqlserver://" + dbUrl + ";" + dbName + ";user=" + username + "@ctsb;password=" + password + ";encrypt=true;trustServerCertificate=true;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
                         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
                         Connection conn = DriverManager.getConnection(url);
                         System.out.println(" Conected!\n");
@@ -112,16 +107,16 @@ public class ServerHelper {
                         ResultSetMetaData rsmd = rs.getMetaData();
                         int columnsNumber = rsmd.getColumnCount();
 
-                        FileWriter appender = new FileWriter(fileName, true);
-
-                        while (rs.next()) {
-                            appender.write("\r\n");
-                            for (int i = 1; i <= columnsNumber; i++) {
-                                appender.write(rs.getString(i) + " ");
+                        try (FileWriter appender = new FileWriter(fileName, false)) {
+                            while (rs.next()) {
+                                appender.write("\r\n");
+                                for (int i = 1; i <= columnsNumber; i++) {
+                                    appender.write(rs.getString(i) + " ");
+                                }
                             }
                         }
                     } catch (ClassNotFoundException | IOException | SQLException ex) {
-                        System.out.println("An issue....\n" + ex);
+                        System.out.println(" Error! An issue....\n" + ex);
                         return;
                     }
                 }
@@ -141,20 +136,5 @@ public class ServerHelper {
             }
         });
         stopper.start();
-    }
-
-    public static void exportToExcel(Text infoBox) {
-        String filename = "Scoreboard_";
-        filename += new SimpleDateFormat("MMddyy_HHmm").format(Calendar.getInstance().getTime());
-        infoBox.setText("Saving as " + filename);
-        // Do save stuff...
-        try {
-            Thread.sleep(5000);
-
-        } catch (InterruptedException ex) {
-            Logger.getLogger(ServerHelper.class
-                    .getName()).log(Level.SEVERE, null, ex);
-        }
-        infoBox.setText("Saved as " + filename);
     }
 }

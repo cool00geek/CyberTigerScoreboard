@@ -9,8 +9,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -32,14 +30,16 @@ public class GUIHelper {
     private Thread myJumpServerThread; //The thread with the running jump server
     private Thread myAzureServerThread; //The thread with the running Azure server
     private int myPort; //The port the server is running on
-    private String myFilename; // The filename of the file to read
-    private final String myAzureDBUser = "";
-    private final String myAzureDBPass = "";
+    private final String myFilename; // The filename of the file to read
+    private String myAzureDBUser;
+    private String myAzureDBPass;
 
     public GUIHelper(String filename) {
         myServerThread = null;
         myPort = 1947;
         myFilename = filename;
+        myAzureDBUser = "";
+        myAzureDBPass = "";
     }
 
     public MenuBar getMenu(Text textbox) {
@@ -79,7 +79,7 @@ public class GUIHelper {
                         int newPort = Integer.parseInt(res);
                         if (myPort != newPort) {
                             textbox.setText("Please restart the server to use port: " + newPort);
-                            System.out.println("The new port is " + newPort );
+                            System.out.println("The new port is " + newPort);
                             myPort = newPort;
                         } else {
                             textbox.setText("Port unchanged! Still using " + newPort + ".");
@@ -101,7 +101,7 @@ public class GUIHelper {
                 System.out.println("Server stopped!");
             }
         });
-        
+
         MenuItem startJump = new MenuItem("Start Jump Server");
         stopServer.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -112,7 +112,7 @@ public class GUIHelper {
                 System.out.println("Server stopped!");
             }
         });
-        
+
         MenuItem stopJump = new MenuItem("Stop Jump Server");
         stopServer.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -123,26 +123,63 @@ public class GUIHelper {
                 System.out.println("Server stopped!");
             }
         });
-        
+
         MenuItem startAz = new MenuItem("Start Azure server");
-        stopServer.setOnAction(new EventHandler<ActionEvent>() {
+        startAz.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
-                textbox.setText("Stopping server...");
-                myAzureServerThread = ServerHelper.startAzureServer(myFilename, myAzureDBUser, myAzureDBPass);
-                textbox.setText("Server stopped!");
-                System.out.println("Server stopped!");
+                TextInputDialog urlb = new TextInputDialog("xxxx.database.windows.net:1433");
+                urlb.setTitle("Azure server");
+                urlb.setHeaderText("Enter your Azure server location(URL)");
+                urlb.setContentText("Enter your Azure server location(URL):");
+
+                // Traditional way to get the response value.
+                Optional<String> result = urlb.showAndWait();
+                String DBUrl = "";
+                if (result.isPresent()){
+                    DBUrl = result.toString();
+                }
+                
+                TextInputDialog dbName = new TextInputDialog("database=CPscores");
+                urlb.setTitle("Azure DB");
+                urlb.setHeaderText("Enter your Azure Database name");
+                urlb.setContentText("Enter your Azure Database name:");
+
+                // Traditional way to get the response value.
+                Optional<String> result2 = urlb.showAndWait();
+                String DBn = "";
+                if (result2.isPresent()){
+                    DBn = result2.toString();
+                }
+                
+                TextInputDialog userPrompt = new TextInputDialog("Azure username");
+                userPrompt.setTitle("Azure login");
+                userPrompt.setHeaderText("Enter your Azure DB username");
+                userPrompt.setContentText("Enter your Azure DB username:");
+
+                // Traditional way to get the response value.
+                Optional<String> result3 = userPrompt.showAndWait();
+                result3.ifPresent(username -> myAzureDBUser = username);
+                
+                PasswordDialog pwPrompt = new PasswordDialog();
+                Optional<String>  result4 = pwPrompt.showAndWait();
+                result4.ifPresent(password -> myAzureDBPass = password);
+                
+                textbox.setText("Starting Azure server...");
+                myAzureServerThread = ServerHelper.startAzureServer(myFilename, DBUrl, DBn, myAzureDBUser, myAzureDBPass);
+                textbox.setText("Azure Server started!");
+                System.out.println("Azure Server started!");
             }
         });
-        
+
         MenuItem stopAz = new MenuItem("Stop Azure server");
-        stopServer.setOnAction(new EventHandler<ActionEvent>() {
+        stopAz.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
-                textbox.setText("Stopping server...");
+                textbox.setText("Stopping Azure server...");
                 ServerHelper.stopAzureServer(myAzureServerThread);
-                textbox.setText("Server stopped!");
-                System.out.println("Server stopped!");
+                textbox.setText("Azure Server stopped!");
+                System.out.println("Azure Server stopped!");
             }
         });
 
@@ -150,7 +187,14 @@ public class GUIHelper {
         export.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
-                ServerHelper.exportToExcel(textbox);
+                Dialog aboutDiag = new Dialog();
+                aboutDiag.setContentText("1) Open a blank Excel sheet\n2) In the 'Data' tab, choose 'Other sources' --> SQL\n3) Enter the DB location, and enter your DB username and password");
+                aboutDiag.setTitle("Export to Excel");
+                aboutDiag.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+                Node closeButton = aboutDiag.getDialogPane().lookupButton(ButtonType.CLOSE);
+                closeButton.managedProperty().bind(closeButton.visibleProperty());
+                closeButton.setVisible(false);
+                aboutDiag.showAndWait();
             }
         });
 
@@ -179,7 +223,8 @@ public class GUIHelper {
         });
 
         fileMenu.getItems().addAll(export, quit);
-        serverMenu.getItems().addAll(startServer, TCPServerConfig, stopServer, startJump, stopJump);
+        serverMenu.getItems().addAll(startServer, TCPServerConfig, stopServer, startJump, stopJump, startAz, stopAz);
+        //serverMenu.getItems().addAll(startAz, stopAz);
         helpMenu.getItems().addAll(about);
         menuBar.getMenus().addAll(fileMenu, serverMenu, helpMenu);
 
@@ -189,7 +234,6 @@ public class GUIHelper {
     public void updateScores(ArrayList<Team> teams, String filename) {
         try {
             BufferedReader inFile = new BufferedReader(new InputStreamReader(new FileInputStream(filename), "UTF-8"));
-            //BufferedReader inFile = new BufferedReader(new FileReader(filename, "UTF-8"));
             String L1 = inFile.readLine();
             while (L1 != null) {
                 // Parse it into Team-OS, SCORE, and TIME
@@ -216,10 +260,10 @@ public class GUIHelper {
                     teams.get(loc).addScore(new Score(time, score), OS);
                 }
                 L1 = inFile.readLine();
+                System.out.println("Scores updated!");
             }
         } catch (IOException ex) {
-            Logger.getLogger(GUIHelper.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("An error has occured!\n" + ex + "\n\nIf the file was not found, don't worry, as the file has been created!");
         }
-        System.out.println("Scores updated!");
     }
 }
