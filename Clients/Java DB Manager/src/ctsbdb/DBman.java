@@ -19,8 +19,8 @@ import java.sql.Statement;
  */
 public class DBman {
 
-    private String myUsername = "";
-    private String myPassword = "";
+    private String myUsername;
+    private String myPassword;
     private String url;
 
     public DBman(String username, String password) {

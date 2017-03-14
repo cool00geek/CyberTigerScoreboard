@@ -95,8 +95,9 @@ public class GUIHelper {
         stopServer.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
-                textbox.setText("Stopping server...");
+                textbox.setText("Stopping TCP server...");
                 ServerHelper.stopServer(myServerThread);
+                myServerThread = null;
                 textbox.setText("Server stopped!");
                 System.out.println("Server stopped!");
             }
@@ -106,10 +107,10 @@ public class GUIHelper {
         stopServer.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
-                textbox.setText("Stopping server...");
+                textbox.setText("Starting Jump server...");
                 myJumpServerThread = ServerHelper.startJumpServer(myFilename);
-                textbox.setText("Server stopped!");
-                System.out.println("Server stopped!");
+                textbox.setText("Jump server started!");
+                System.out.println("Jump server started!");
             }
         });
 
@@ -117,10 +118,10 @@ public class GUIHelper {
         stopServer.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
-                textbox.setText("Stopping server...");
+                textbox.setText("Stopping Jump server...");
                 ServerHelper.stopJumpServer(myJumpServerThread);
-                textbox.setText("Server stopped!");
-                System.out.println("Server stopped!");
+                textbox.setText("Jump server stopped!");
+                System.out.println("Jump Server stopped!");
             }
         });
 
@@ -128,6 +129,7 @@ public class GUIHelper {
         startAz.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
+                textbox.setText("Configuring Jump server...");
                 TextInputDialog urlb = new TextInputDialog("xxxx.database.windows.net:1433");
                 urlb.setTitle("Azure server");
                 urlb.setHeaderText("Enter your Azure server location(URL)");
@@ -140,13 +142,13 @@ public class GUIHelper {
                     DBUrl = result.toString();
                 }
                 
-                TextInputDialog dbName = new TextInputDialog("database=CPscores");
-                urlb.setTitle("Azure DB");
-                urlb.setHeaderText("Enter your Azure Database name");
-                urlb.setContentText("Enter your Azure Database name:");
+                TextInputDialog dbName = new TextInputDialog("CPscores");
+                dbName.setTitle("Azure DB");
+                dbName.setHeaderText("Enter your Azure Database name");
+                dbName.setContentText("Enter your Azure Database name:");
 
                 // Traditional way to get the response value.
-                Optional<String> result2 = urlb.showAndWait();
+                Optional<String> result2 = dbName.showAndWait();
                 String DBn = "";
                 if (result2.isPresent()){
                     DBn = result2.toString();
@@ -178,6 +180,7 @@ public class GUIHelper {
             public void handle(ActionEvent t) {
                 textbox.setText("Stopping Azure server...");
                 ServerHelper.stopAzureServer(myAzureServerThread);
+                myAzureServerThread = null;
                 textbox.setText("Azure Server stopped!");
                 System.out.println("Azure Server stopped!");
             }
@@ -223,8 +226,7 @@ public class GUIHelper {
         });
 
         fileMenu.getItems().addAll(export, quit);
-        serverMenu.getItems().addAll(startServer, TCPServerConfig, stopServer, startJump, stopJump, startAz, stopAz);
-        //serverMenu.getItems().addAll(startAz, stopAz);
+        serverMenu.getItems().addAll(startAz, stopAz, startServer, TCPServerConfig, stopServer, startJump, stopJump);
         helpMenu.getItems().addAll(about);
         menuBar.getMenus().addAll(fileMenu, serverMenu, helpMenu);
 
