@@ -19,14 +19,18 @@ import java.sql.Statement;
  */
 public class DBman {
 
+    private final String myServer;
+    private final String myDb;
     private String myUsername;
     private String myPassword;
     private String url;
 
-    public DBman(String username, String password) {
+    public DBman(String server, String db, String username, String password) {
+        myServer = server;
+        myDb = db;
         myUsername = username;
         myPassword = password;
-        url = "jdbc:sqlserver://ctsb.database.windows.net:1433;database=CPscores;user=" + myUsername + "@ctsb;password=" + myPassword + ";encrypt=true;trustServerCertificate=true;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
+        url = "jdbc:sqlserver://" + myServer + ";database=" + myDb + ";user=" + myUsername + "@ctsb;password=" + myPassword + ";encrypt=true;trustServerCertificate=true;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
     }
 
     public void printTable() {
@@ -105,15 +109,15 @@ public class DBman {
 
     public void setUsername(String username) {
         myUsername = username;
-        url = "jdbc:sqlserver://ctsb.database.windows.net:1433;database=CPscores;user=" + myUsername + "@ctsb;password=" + myPassword + ";encrypt=true;trustServerCertificate=true;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
+        url = "jdbc:sqlserver://" + myServer + ";database=" + myDb + ";user=" + myUsername + "@ctsb;password=" + myPassword + ";encrypt=true;trustServerCertificate=true;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
     }
 
     public void setPassword(String password) {
         myPassword = password;
-        url = "jdbc:sqlserver://ctsb.database.windows.net:1433;database=CPscores;user=" + myUsername + "@ctsb;password=" + myPassword + ";encrypt=true;trustServerCertificate=true;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
+        url = "jdbc:sqlserver://" + myServer + ";database=" + myDb + ";user=" + myUsername + "@ctsb;password=" + myPassword + ";encrypt=true;trustServerCertificate=true;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
     }
 
     public String info() {
-        return url.substring(0, url.indexOf("database="));
+        return myUsername + "@" + myServer + ", DB:" + myDb;
     }
 }
