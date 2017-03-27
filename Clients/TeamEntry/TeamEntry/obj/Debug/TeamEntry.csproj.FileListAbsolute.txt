@@ -1,0 +1,9 @@
+C:\Users\Vinay\Documents\CyberTigerScoreboard\Clients\TeamEntry\TeamEntry\bin\Debug\TeamEntry.exe.config
+C:\Users\Vinay\Documents\CyberTigerScoreboard\Clients\TeamEntry\TeamEntry\bin\Debug\TeamEntry.exe
+C:\Users\Vinay\Documents\CyberTigerScoreboard\Clients\TeamEntry\TeamEntry\bin\Debug\TeamEntry.pdb
+C:\Users\Vinay\Documents\CyberTigerScoreboard\Clients\TeamEntry\TeamEntry\obj\Debug\TeamEntry.csprojResolveAssemblyReference.cache
+C:\Users\Vinay\Documents\CyberTigerScoreboard\Clients\TeamEntry\TeamEntry\obj\Debug\TeamEntry.Win.resources
+C:\Users\Vinay\Documents\CyberTigerScoreboard\Clients\TeamEntry\TeamEntry\obj\Debug\TeamEntry.Properties.Resources.resources
+C:\Users\Vinay\Documents\CyberTigerScoreboard\Clients\TeamEntry\TeamEntry\obj\Debug\TeamEntry.csproj.GenerateResource.Cache
+C:\Users\Vinay\Documents\CyberTigerScoreboard\Clients\TeamEntry\TeamEntry\obj\Debug\TeamEntry.exe
+C:\Users\Vinay\Documents\CyberTigerScoreboard\Clients\TeamEntry\TeamEntry\obj\Debug\TeamEntry.pdb
