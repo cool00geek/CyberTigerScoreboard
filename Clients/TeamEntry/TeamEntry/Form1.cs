@@ -23,8 +23,6 @@ namespace TeamEntry
             }
             else
             {
-
-
                 InitializeComponent();
 
                 Label.AutoSize = false;
@@ -57,6 +55,7 @@ namespace TeamEntry
 
         private async void okButton_Click(object sender, EventArgs e)
         {
+            string imageIdentifier = "-winJedi";
             string name = TeamEntry.Text;
             if (name.Equals(""))
             {
@@ -73,7 +72,7 @@ namespace TeamEntry
                 okButton.Cursor = Cursors.WaitCursor;
                 TeamEntry.Cursor = Cursors.WaitCursor;
                 this.Cursor = Cursors.WaitCursor;
-                System.IO.File.WriteAllText(@"C:\CyberPatriot Score Report\team.txt", name);
+                File.WriteAllText(@"C:\CyberPatriot Score Report\team.txt", name + imageIdentifier);
                 await Task.Delay(4000);
                 Application.Exit();
             }

@@ -7,3 +7,6 @@ C:\Users\Vinay\Documents\CyberTigerScoreboard\Clients\TeamEntry\TeamEntry\obj\De
 C:\Users\Vinay\Documents\CyberTigerScoreboard\Clients\TeamEntry\TeamEntry\obj\Debug\TeamEntry.csproj.GenerateResource.Cache
 C:\Users\Vinay\Documents\CyberTigerScoreboard\Clients\TeamEntry\TeamEntry\obj\Debug\TeamEntry.exe
 C:\Users\Vinay\Documents\CyberTigerScoreboard\Clients\TeamEntry\TeamEntry\obj\Debug\TeamEntry.pdb
+C:\Users\054457\Documents\CPscoreboard\Clients\TeamEntry\TeamEntry\bin\Debug\TeamEntry.exe.config
+C:\Users\054457\Documents\CPscoreboard\Clients\TeamEntry\TeamEntry\obj\Debug\TeamEntry.exe
+C:\Users\054457\Documents\CPscoreboard\Clients\TeamEntry\TeamEntry\obj\Debug\TeamEntry.pdb
