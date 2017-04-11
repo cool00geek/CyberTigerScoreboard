@@ -49,180 +49,150 @@ public class GUIHelper {
         Menu helpMenu = new Menu("Help");
 
         MenuItem startServer = new MenuItem("Start TCP Server");
-        startServer.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                textbox.setText("Starting server on port " + myPort + "...");
-                myServerThread = ServerHelper.startServer(myPort, myFilename);
-                textbox.setText("Server started on port " + myPort + "!");
-                System.out.println("TCP Server started on " + myPort);
-            }
+        startServer.setOnAction((ActionEvent t) -> {
+            textbox.setText("Starting server on port " + myPort + "...");
+            myServerThread = ServerHelper.startServer(myPort, myFilename);
+            textbox.setText("Server started on port " + myPort + "!");
+            System.out.println("TCP Server started on " + myPort);
         });
 
         MenuItem TCPServerConfig = new MenuItem("Configure TCP Server");
-        TCPServerConfig.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                TextInputDialog dialog = new TextInputDialog("" + myPort);
-                dialog.setTitle("TCP Port");
-                dialog.setHeaderText("Choose a custom TCP Port");
-                dialog.setContentText("Please enter the port of your choice:");
-
-                // Traditional way to get the response value.
-                Optional<String> result = dialog.showAndWait();
-                if (result.isPresent()) {
-                    try {
-                        String res = result.get();
-                        if (res.contains("-")) {
-                            res += "asd";
-                        }
-                        int newPort = Integer.parseInt(res);
-                        if (myPort != newPort) {
-                            textbox.setText("Please restart the server to use port: " + newPort);
-                            System.out.println("The new port is " + newPort);
-                            myPort = newPort;
-                        } else {
-                            textbox.setText("Port unchanged! Still using " + newPort + ".");
-                        }
-                    } catch (NumberFormatException e) {
-                        textbox.setText(result.get() + " is not a valid port! Still using " + myPort);
+        TCPServerConfig.setOnAction((ActionEvent t) -> {
+            TextInputDialog dialog = new TextInputDialog("" + myPort);
+            dialog.setTitle("TCP Port");
+            dialog.setHeaderText("Choose a custom TCP Port");
+            dialog.setContentText("Please enter the port of your choice:");
+            
+            // Traditional way to get the response value.
+            Optional<String> result = dialog.showAndWait();
+            if (result.isPresent()) {
+                try {
+                    String res = result.get();
+                    if (res.contains("-")) {
+                        res += "asd";
                     }
+                    int newPort = Integer.parseInt(res);
+                    if (myPort != newPort) {
+                        textbox.setText("Please restart the server to use port: " + newPort);
+                        System.out.println("The new port is " + newPort);
+                        myPort = newPort;
+                    } else {
+                        textbox.setText("Port unchanged! Still using " + newPort + ".");
+                    }
+                } catch (NumberFormatException e) {
+                    textbox.setText(result.get() + " is not a valid port! Still using " + myPort);
                 }
             }
         });
 
         MenuItem stopServer = new MenuItem("Stop TCP Server");
-        stopServer.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                textbox.setText("Stopping TCP server...");
-                ServerHelper.stopServer(myServerThread);
-                myServerThread = null;
-                textbox.setText("Server stopped!");
-                System.out.println("Server stopped!");
-            }
+        stopServer.setOnAction((ActionEvent t) -> {
+            textbox.setText("Stopping TCP server...");
+            ServerHelper.stopServer(myServerThread);
+            myServerThread = null;
+            textbox.setText("Server stopped!");
+            System.out.println("Server stopped!");
         });
 
         MenuItem startJump = new MenuItem("Start Jump Server");
-        stopServer.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                textbox.setText("Starting Jump server...");
-                myJumpServerThread = ServerHelper.startJumpServer(myFilename);
-                textbox.setText("Jump server started!");
-                System.out.println("Jump server started!");
-            }
+        stopServer.setOnAction((ActionEvent t) -> {
+            textbox.setText("Starting Jump server...");
+            myJumpServerThread = ServerHelper.startJumpServer(myFilename);
+            textbox.setText("Jump server started!");
+            System.out.println("Jump server started!");
         });
 
         MenuItem stopJump = new MenuItem("Stop Jump Server");
-        stopServer.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                textbox.setText("Stopping Jump server...");
-                ServerHelper.stopJumpServer(myJumpServerThread);
-                textbox.setText("Jump server stopped!");
-                System.out.println("Jump Server stopped!");
-            }
+        stopServer.setOnAction((ActionEvent t) -> {
+            textbox.setText("Stopping Jump server...");
+            ServerHelper.stopJumpServer(myJumpServerThread);
+            textbox.setText("Jump server stopped!");
+            System.out.println("Jump Server stopped!");
         });
 
         MenuItem startAz = new MenuItem("Start Azure server");
-        startAz.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                textbox.setText("Configuring Jump server...");
-                TextInputDialog urlb = new TextInputDialog("xxxx.database.windows.net:1433");
-                urlb.setTitle("Azure server");
-                urlb.setHeaderText("Enter your Azure server location(URL)");
-                urlb.setContentText("Enter your Azure server location(URL):");
-
-                // Traditional way to get the response value.
-                Optional<String> result = urlb.showAndWait();
-                String DBUrl = "";
-                if (result.isPresent()){
-                    DBUrl = result.toString();
-                }
-                
-                TextInputDialog dbName = new TextInputDialog("CPscores");
-                dbName.setTitle("Azure DB");
-                dbName.setHeaderText("Enter your Azure Database name");
-                dbName.setContentText("Enter your Azure Database name:");
-
-                // Traditional way to get the response value.
-                Optional<String> result2 = dbName.showAndWait();
-                String DBn = "";
-                if (result2.isPresent()){
-                    DBn = result2.toString();
-                }
-                
-                TextInputDialog userPrompt = new TextInputDialog("Azure username");
-                userPrompt.setTitle("Azure login");
-                userPrompt.setHeaderText("Enter your Azure DB username");
-                userPrompt.setContentText("Enter your Azure DB username:");
-
-                // Traditional way to get the response value.
-                Optional<String> result3 = userPrompt.showAndWait();
-                result3.ifPresent(username -> myAzureDBUser = username);
-                
-                PasswordDialog pwPrompt = new PasswordDialog();
-                Optional<String>  result4 = pwPrompt.showAndWait();
-                result4.ifPresent(password -> myAzureDBPass = password);
-                
-                textbox.setText("Starting Azure server...");
-                myAzureServerThread = ServerHelper.startAzureServer(myFilename, DBUrl, DBn, myAzureDBUser, myAzureDBPass);
-                textbox.setText("Azure Server started!");
-                System.out.println("Azure Server started!");
+        startAz.setOnAction((ActionEvent t) -> {
+            textbox.setText("Configuring Jump server...");
+            TextInputDialog urlb = new TextInputDialog("xxxx.database.windows.net:1433");
+            urlb.setTitle("Azure server");
+            urlb.setHeaderText("Enter your Azure server location(URL)");
+            urlb.setContentText("Enter your Azure server location(URL):");
+            
+            // Traditional way to get the response value.
+            Optional<String> result = urlb.showAndWait();
+            String DBUrl = "";
+            if (result.isPresent()){
+                DBUrl = result.toString();
             }
+            
+            TextInputDialog dbName = new TextInputDialog("CPscores");
+            dbName.setTitle("Azure DB");
+            dbName.setHeaderText("Enter your Azure Database name");
+            dbName.setContentText("Enter your Azure Database name:");
+            
+            // Traditional way to get the response value.
+            Optional<String> result2 = dbName.showAndWait();
+            String DBn = "";
+            if (result2.isPresent()){
+                DBn = result2.toString();
+            }
+            
+            TextInputDialog userPrompt = new TextInputDialog("Azure username");
+            userPrompt.setTitle("Azure login");
+            userPrompt.setHeaderText("Enter your Azure DB username");
+            userPrompt.setContentText("Enter your Azure DB username:");
+            
+            // Traditional way to get the response value.
+            Optional<String> result3 = userPrompt.showAndWait();
+            result3.ifPresent(username -> myAzureDBUser = username);
+            
+            PasswordDialog pwPrompt = new PasswordDialog();
+            Optional<String>  result4 = pwPrompt.showAndWait();
+            result4.ifPresent(password -> myAzureDBPass = password);
+            
+            textbox.setText("Starting Azure server...");
+            myAzureServerThread = ServerHelper.startAzureServer(myFilename, DBUrl, DBn, myAzureDBUser, myAzureDBPass);
+            textbox.setText("Azure Server started!");
+            System.out.println("Azure Server started!");
         });
 
         MenuItem stopAz = new MenuItem("Stop Azure server");
-        stopAz.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                textbox.setText("Stopping Azure server...");
-                ServerHelper.stopAzureServer(myAzureServerThread);
-                myAzureServerThread = null;
-                textbox.setText("Azure Server stopped!");
-                System.out.println("Azure Server stopped!");
-            }
+        stopAz.setOnAction((ActionEvent t) -> {
+            textbox.setText("Stopping Azure server...");
+            ServerHelper.stopAzureServer(myAzureServerThread);
+            myAzureServerThread = null;
+            textbox.setText("Azure Server stopped!");
+            System.out.println("Azure Server stopped!");
         });
 
         MenuItem export = new MenuItem("Export to xls");
-        export.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                Dialog aboutDiag = new Dialog();
-                aboutDiag.setContentText("1) Open a blank Excel sheet\n2) In the 'Data' tab, choose 'Other sources' --> SQL\n3) Enter the DB location, and enter your DB username and password");
-                aboutDiag.setTitle("Export to Excel");
-                aboutDiag.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
-                Node closeButton = aboutDiag.getDialogPane().lookupButton(ButtonType.CLOSE);
-                closeButton.managedProperty().bind(closeButton.visibleProperty());
-                closeButton.setVisible(false);
-                aboutDiag.showAndWait();
-            }
+        export.setOnAction((ActionEvent t) -> {
+            Dialog aboutDiag = new Dialog();
+            aboutDiag.setContentText("1) Open a blank Excel sheet\n2) In the 'Data' tab, choose 'Other sources' --> SQL\n3) Enter the DB location, and enter your DB username and password");
+            aboutDiag.setTitle("Export to Excel");
+            aboutDiag.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+            Node closeButton = aboutDiag.getDialogPane().lookupButton(ButtonType.CLOSE);
+            closeButton.managedProperty().bind(closeButton.visibleProperty());
+            closeButton.setVisible(false);
+            aboutDiag.showAndWait();
         });
 
         MenuItem quit = new MenuItem("Exit");
-        quit.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                ServerHelper.stopServer(myServerThread);
-                System.exit(0);
-            }
+        quit.setOnAction((ActionEvent t) -> {
+            ServerHelper.stopServer(myServerThread);
+            System.exit(0);
         });
 
         MenuItem about = new MenuItem("About...");
-        about.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                Dialog aboutDiag = new Dialog();
-                aboutDiag.setContentText("Created by @billwi and @hexalellogram for the VHS CyberPatriot team!\nShoutout to Mr. Osborne for running CyberPatriot, Irvin for guiding us, and Mr. Parker for giving us the knowledge to create this scoreboard!\n\nThis is licensed under the GNU/GPL V3 Public license!");
-                aboutDiag.setTitle("About CyberTiger Scoreboard");
-                aboutDiag.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
-                Node closeButton = aboutDiag.getDialogPane().lookupButton(ButtonType.CLOSE);
-                closeButton.managedProperty().bind(closeButton.visibleProperty());
-                closeButton.setVisible(false);
-                aboutDiag.showAndWait();
-            }
+        about.setOnAction((ActionEvent t) -> {
+            Dialog aboutDiag = new Dialog();
+            aboutDiag.setContentText("Created by @billwi and @hexalellogram for the VHS CyberPatriot team!\nShoutout to Mr. Osborne for running CyberPatriot, Irvin for guiding us, and Mr. Parker for giving us the knowledge to create this scoreboard!\n\nThis is licensed under the GNU/GPL V3 Public license!");
+            aboutDiag.setTitle("About CyberTiger Scoreboard");
+            aboutDiag.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+            Node closeButton = aboutDiag.getDialogPane().lookupButton(ButtonType.CLOSE);
+            closeButton.managedProperty().bind(closeButton.visibleProperty());
+            closeButton.setVisible(false);
+            aboutDiag.showAndWait();
         });
 
         fileMenu.getItems().addAll(export, quit);
