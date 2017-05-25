@@ -10,7 +10,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Optional;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
@@ -27,19 +26,18 @@ import javafx.scene.text.Text;
 public class GUIHelper {
 
     private Thread myServerThread; //The thread with the running server
-    private Thread myJumpServerThread; //The thread with the running jump server
     private Thread myAzureServerThread; //The thread with the running Azure server
-    private int myPort; //The port the server is running on
     private final String myFilename; // The filename of the file to read
     private String myAzureDBUser;
     private String myAzureDBPass;
+    private ServerHelper myServerHelp;
 
     public GUIHelper(String filename) {
         myServerThread = null;
-        myPort = 1947;
         myFilename = filename;
         myAzureDBUser = "";
         myAzureDBPass = "";
+        myServerHelp = new ServerHelper();
     }
 
     public MenuBar getMenu(Text textbox) {
@@ -48,118 +46,59 @@ public class GUIHelper {
         Menu serverMenu = new Menu("Server");
         Menu helpMenu = new Menu("Help");
 
-        MenuItem startServer = new MenuItem("Start TCP Server");
-        startServer.setOnAction((ActionEvent t) -> {
-            textbox.setText("Starting server on port " + myPort + "...");
-            myServerThread = ServerHelper.startServer(myPort, myFilename);
-            textbox.setText("Server started on port " + myPort + "!");
-            System.out.println("TCP Server started on " + myPort);
-        });
-
-        MenuItem TCPServerConfig = new MenuItem("Configure TCP Server");
-        TCPServerConfig.setOnAction((ActionEvent t) -> {
-            TextInputDialog dialog = new TextInputDialog("" + myPort);
-            dialog.setTitle("TCP Port");
-            dialog.setHeaderText("Choose a custom TCP Port");
-            dialog.setContentText("Please enter the port of your choice:");
-            
-            // Traditional way to get the response value.
-            Optional<String> result = dialog.showAndWait();
-            if (result.isPresent()) {
-                try {
-                    String res = result.get();
-                    if (res.contains("-")) {
-                        res += "asd";
-                    }
-                    int newPort = Integer.parseInt(res);
-                    if (myPort != newPort) {
-                        textbox.setText("Please restart the server to use port: " + newPort);
-                        System.out.println("The new port is " + newPort);
-                        myPort = newPort;
-                    } else {
-                        textbox.setText("Port unchanged! Still using " + newPort + ".");
-                    }
-                } catch (NumberFormatException e) {
-                    textbox.setText(result.get() + " is not a valid port! Still using " + myPort);
-                }
-            }
-        });
-
-        MenuItem stopServer = new MenuItem("Stop TCP Server");
-        stopServer.setOnAction((ActionEvent t) -> {
-            textbox.setText("Stopping TCP server...");
-            ServerHelper.stopServer(myServerThread);
-            myServerThread = null;
-            textbox.setText("Server stopped!");
-            System.out.println("Server stopped!");
-        });
-
-        MenuItem startJump = new MenuItem("Start Jump Server");
-        stopServer.setOnAction((ActionEvent t) -> {
-            textbox.setText("Starting Jump server...");
-            myJumpServerThread = ServerHelper.startJumpServer(myFilename);
-            textbox.setText("Jump server started!");
-            System.out.println("Jump server started!");
-        });
-
-        MenuItem stopJump = new MenuItem("Stop Jump Server");
-        stopServer.setOnAction((ActionEvent t) -> {
-            textbox.setText("Stopping Jump server...");
-            ServerHelper.stopJumpServer(myJumpServerThread);
-            textbox.setText("Jump server stopped!");
-            System.out.println("Jump Server stopped!");
-        });
-
         MenuItem startAz = new MenuItem("Start Azure server");
         startAz.setOnAction((ActionEvent t) -> {
-            textbox.setText("Configuring Jump server...");
+            textbox.setText("Configuring Azure server...");
             TextInputDialog urlb = new TextInputDialog("xxxx.database.windows.net:1433");
             urlb.setTitle("Azure server");
             urlb.setHeaderText("Enter your Azure server location(URL)");
             urlb.setContentText("Enter your Azure server location(URL):");
-            
+
             // Traditional way to get the response value.
             Optional<String> result = urlb.showAndWait();
             String DBUrl = "";
-            if (result.isPresent()){
+            if (result.isPresent()) {
                 DBUrl = result.toString();
+                DBUrl = DBUrl.substring(9, DBUrl.length() -1);
             }
-            
+
             TextInputDialog dbName = new TextInputDialog("CPscores");
             dbName.setTitle("Azure DB");
             dbName.setHeaderText("Enter your Azure Database name");
             dbName.setContentText("Enter your Azure Database name:");
-            
+
             // Traditional way to get the response value.
             Optional<String> result2 = dbName.showAndWait();
             String DBn = "";
-            if (result2.isPresent()){
+            if (result2.isPresent()) {
                 DBn = result2.toString();
+                DBn = DBn.substring(9,DBn.length()-1);
             }
-            
+
             TextInputDialog userPrompt = new TextInputDialog("Azure username");
             userPrompt.setTitle("Azure login");
             userPrompt.setHeaderText("Enter your Azure DB username");
             userPrompt.setContentText("Enter your Azure DB username:");
-            
+
             // Traditional way to get the response value.
             Optional<String> result3 = userPrompt.showAndWait();
             result3.ifPresent(username -> myAzureDBUser = username);
-            
+
             PasswordDialog pwPrompt = new PasswordDialog();
-            Optional<String>  result4 = pwPrompt.showAndWait();
+            Optional<String> result4 = pwPrompt.showAndWait();
             result4.ifPresent(password -> myAzureDBPass = password);
-            
+
             textbox.setText("Starting Azure server...");
-            myAzureServerThread = ServerHelper.startAzureServer(myFilename, DBUrl, DBn, myAzureDBUser, myAzureDBPass);
-            textbox.setText("Azure Server started!");
+            myServerHelp.startAzureServer(DBUrl, DBn, myAzureDBUser, myAzureDBPass);
+            textbox.setText("Azure Server started! It can take up to 1 minute to get the data.");
             System.out.println("Azure Server started!");
+            
         });
 
         MenuItem stopAz = new MenuItem("Stop Azure server");
         stopAz.setOnAction((ActionEvent t) -> {
             textbox.setText("Stopping Azure server...");
-            ServerHelper.stopAzureServer(myAzureServerThread);
+            myServerHelp.stopAzureServer(myAzureServerThread);
             myAzureServerThread = null;
             textbox.setText("Azure Server stopped!");
             System.out.println("Azure Server stopped!");
@@ -179,7 +118,7 @@ public class GUIHelper {
 
         MenuItem quit = new MenuItem("Exit");
         quit.setOnAction((ActionEvent t) -> {
-            ServerHelper.stopServer(myServerThread);
+            myServerHelp.stopAzureServer(myServerThread);
             System.exit(0);
         });
 
@@ -196,7 +135,7 @@ public class GUIHelper {
         });
 
         fileMenu.getItems().addAll(export, quit);
-        serverMenu.getItems().addAll(startAz, stopAz, startServer, TCPServerConfig, stopServer, startJump, stopJump);
+        serverMenu.getItems().addAll(startAz, stopAz);
         helpMenu.getItems().addAll(about);
         menuBar.getMenus().addAll(fileMenu, serverMenu, helpMenu);
 
@@ -237,5 +176,17 @@ public class GUIHelper {
         } catch (IOException ex) {
             System.out.println("An error has occured!\n" + ex + "\n\nIf the file was not found, don't worry, as the file has been created!");
         }
+    }
+
+    public String getConnURL() {
+        if (myServerHelp != null) {
+            return myServerHelp.getURL();
+        }
+        return "";
+    }
+    
+    public boolean isAzureRunning()
+    {
+        return myServerHelp.isAzureRunning();
     }
 }
