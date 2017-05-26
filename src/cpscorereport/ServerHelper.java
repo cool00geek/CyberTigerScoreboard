@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.logging.Level;
@@ -28,16 +27,16 @@ public class ServerHelper {
         myAzureStatus = false;
     }
 
-    public void startAzureServer(String dbUrl, String dbName, String username, String password){
-        System.out.println("DB URL: " + dbUrl + "\nDBNAme: " + dbName + "\nusername: " + username + "\nPassword:" + password);
+    public void startAzureServer(String dbUrl, String dbName, String username, String password, CPscorereport scorer){
         System.out.println("Azure Server started!");
         try {
             System.out.print("Attempting connection...");
             connUrl = "jdbc:sqlserver://" + dbUrl + ";database=" + dbName + ";user=" + username + "@ctsb;password=" + password + ";encrypt=true;trustServerCertificate=true;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-            Connection conn = DriverManager.getConnection(connUrl);
+            DriverManager.getConnection(connUrl);
             System.out.println(" Conected!\n");
             myAzureStatus = true;
+            scorer.createEverything();
         } catch (ClassNotFoundException | SQLException ex) {
 
             System.out.println(" Error! An issue....\n" + ex);
@@ -64,58 +63,14 @@ public class ServerHelper {
                 }
             }
             myAzureStatus = false;
+        } catch (IOException ex) {
+            Logger.getLogger(ServerHelper.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-        //    public Thread startAzureServer(String dbUrl, String dbName, String username, String password) {
-        //        final Thread server = new Thread(() -> {
-        //            System.out.println("DB URL: " + dbUrl + "\nDBNAme: " + dbName + "\nusername: " + username + "\nPassword:" + password);
-        //            System.out.println("Azure Server started!");
-        //            while (!Thread.interrupted()) {
-        //                try {
-        //                    System.out.print("Attempting connection...");
-        //                    connUrl = "jdbc:sqlserver://" + dbUrl + ";database=" + dbName + ";user=" + username + "@ctsb;password=" + password + ";encrypt=true;trustServerCertificate=true;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
-        //                    //System.out.println(connUrl);
-        //                    Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-        //                    Connection conn = DriverManager.getConnection(connUrl);
-        //                    System.out.println(" Conected!\n");
-        //                } catch (ClassNotFoundException | SQLException ex) {
-        //                    try {
-        //                        System.out.println(" Error! An issue....\n" + ex);
-        //                        System.out.println("It is possible that your IP is blacklisted!\nYour ip is:");
-        //                        URL whatismyip = new URL("http://checkip.amazonaws.com");
-        //                        BufferedReader in = null;
-        //                        try {
-        //                            in = new BufferedReader(new InputStreamReader(whatismyip.openStream()));
-        //                            String ip = in.readLine();
-        //                            System.out.println(ip);
-        //                        } catch (IOException ex1) {
-        //                            Logger.getLogger(ServerHelper.class.getName()).log(Level.SEVERE, null, ex1);
-        //                        } finally {
-        //                            if (in != null) {
-        //                                try {
-        //                                    in.close();
-        //                                } catch (IOException e) {
-        //                                }
-        //                            }
-        //                        }
-        //                        return;
-        //                    } catch (MalformedURLException ex1) {
-        //                        Logger.getLogger(ServerHelper.class.getName()).log(Level.SEVERE, null, ex1);
-        //                    }
-        //                }
-        //            }
-        //        });
-        //        server.start();
-        //        return server;
-        //    }
 
-    public void stopAzureServer(Thread theServer) {
-        final Thread stopper = new Thread(() -> {
-            System.out.println("Stopping server...");
-            theServer.interrupt();
-        });
-        stopper.start();
+    public void stopAzureServer() {
         myAzureStatus = false;
+        System.out.println("Stopping server...");
     }
 
     public String getURL() {

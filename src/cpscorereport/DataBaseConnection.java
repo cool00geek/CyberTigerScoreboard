@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
@@ -29,16 +28,13 @@ public class DataBaseConnection {
     public static ArrayList<Team> loadList(String connectionString) throws MalformedURLException, IOException {
         ArrayList<Team> teams = new ArrayList<>();
 
-        System.out.print("Attempting connection with " + connectionString + "...");
+        System.out.print("Attempting...");
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             Connection conn = DriverManager.getConnection(connectionString);
-            System.out.println(" Conected!\n");
+            System.out.println(" Conected!");
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery("SELECT * FROM TeamScores");
-            ResultSetMetaData rsmd = rs.getMetaData();
-
-            //int columnsNumber = rsmd.getColumnCount();
             while (rs.next()) {
                 String team = rs.getString(1);
                 String os = team.substring(team.indexOf("-") + 1);
@@ -51,23 +47,16 @@ public class DataBaseConnection {
                 } else {
                     teams.get(loc).addScore(new Score("" + time, score), os);
                 }
-                System.out.println();
             }
         } catch (ClassNotFoundException | SQLException e) {
             System.out.println(" Error! " + e);
             System.out.println("It is possible that your IP is blacklisted!\nYour ip is:");
             URL whatismyip = new URL("http://checkip.amazonaws.com");
-            BufferedReader in = null;
-            try {
-                in = new BufferedReader(new InputStreamReader(whatismyip.openStream()));
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(whatismyip.openStream()))) {
                 String ip = in.readLine();
                 System.out.println(ip);
             } catch (IOException ex1) {
                 Logger.getLogger(ServerHelper.class.getName()).log(Level.SEVERE, null, ex1);
-            } finally {
-                if (in != null) {
-                    in.close();
-                }
             }
         }
 

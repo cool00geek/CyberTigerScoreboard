@@ -5,15 +5,16 @@ package cpscorereport;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
@@ -21,6 +22,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
@@ -36,7 +38,6 @@ public class CPscorereport extends Application {
 
     final private double DEFAULT_WIDTH = 1366;
     final private double DEFAULT_HEIGHT = 720;
-    final private String FILENAME = "rawData.txt";
     final private String ICON_LOC = "/resources/icon.png"; // The location of the icon
     final private int REFRESH_TIMEOUT = 60; // Delay in seconds between refreshes
     private GUIHelper setUpHelp;
@@ -58,7 +59,7 @@ public class CPscorereport extends Application {
     public void start(Stage mainWin) throws FileNotFoundException, IOException {
         teamTabs = new TabPane();
         info = createTextBox("Server not configured!");
-        setUpHelp = new GUIHelper(FILENAME);
+        setUpHelp = new GUIHelper(this);
         menuBar = setUpHelp.getMenu(info);
         borderPane = new BorderPane();
 
@@ -68,6 +69,7 @@ public class CPscorereport extends Application {
         borderPane.setCenter(elementSect);
         borderPane.setBottom(info);
         Scene scene = new Scene(borderPane, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+        mainWin.getIcons().add(new Image(ICON_LOC));
         mainWin.setTitle("CyberTiger Scoreboard");
         mainWin.setScene(scene);
         mainWin.show();
@@ -75,14 +77,11 @@ public class CPscorereport extends Application {
         createEverything();
 
         // Make it refresh
-        Timeline scoreboardRefresh = new Timeline(new KeyFrame(Duration.seconds(REFRESH_TIMEOUT), new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                try {
-                    createEverything();
-                } catch (IOException ex) {
-                    Logger.getLogger(CPscorereport.class.getName()).log(Level.SEVERE, null, ex);
-                }
+        Timeline scoreboardRefresh = new Timeline(new KeyFrame(Duration.seconds(REFRESH_TIMEOUT), (ActionEvent event) -> {
+            try {
+                createEverything();
+            } catch (IOException ex) {
+                Logger.getLogger(CPscorereport.class.getName()).log(Level.SEVERE, null, ex);
             }
         }));
 
@@ -151,6 +150,7 @@ public class CPscorereport extends Application {
                     charts[i].getData().add(thisSeries);
                     seriesPos++;
                     teamTabList[i].setContent(charts[i]);
+                    teamTabList[i].setClosable(false);
                 }
             }
             // Configure all teams tab
@@ -166,12 +166,19 @@ public class CPscorereport extends Application {
             allChart.getData().addAll(Arrays.asList(scoreSeries));
             teamTabList[0].setContent(allChart);
 
+            int loc = teamTabs.getSelectionModel().getSelectedIndex();
+
             // Make all tabs visible
             while (!teamTabs.getTabs().isEmpty()) {
                 teamTabs.getTabs().remove(0);
             }
             teamTabs.getTabs().addAll(Arrays.asList(teamTabList));
-            info.setText("Data updated!");
+            if (teamTabList.length >= loc) {
+                teamTabs.getSelectionModel().select(loc);
+            } else {
+                teamTabs.getSelectionModel().select(0);
+            }
+            info.setText("Data updated at " + new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new Date()) + "!");
         }
     }
 

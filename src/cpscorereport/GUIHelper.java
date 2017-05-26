@@ -25,19 +25,16 @@ import javafx.scene.text.Text;
  */
 public class GUIHelper {
 
-    private Thread myServerThread; //The thread with the running server
-    private Thread myAzureServerThread; //The thread with the running Azure server
-    private final String myFilename; // The filename of the file to read
     private String myAzureDBUser;
     private String myAzureDBPass;
-    private ServerHelper myServerHelp;
+    private final ServerHelper myServerHelp;
+    private final CPscorereport myScorer;
 
-    public GUIHelper(String filename) {
-        myServerThread = null;
-        myFilename = filename;
+    public GUIHelper(CPscorereport scorer) {
         myAzureDBUser = "";
         myAzureDBPass = "";
         myServerHelp = new ServerHelper();
+        myScorer = scorer;
     }
 
     public MenuBar getMenu(Text textbox) {
@@ -59,7 +56,7 @@ public class GUIHelper {
             String DBUrl = "";
             if (result.isPresent()) {
                 DBUrl = result.toString();
-                DBUrl = DBUrl.substring(9, DBUrl.length() -1);
+                DBUrl = DBUrl.substring(9, DBUrl.length() - 1);
             }
 
             TextInputDialog dbName = new TextInputDialog("CPscores");
@@ -72,7 +69,7 @@ public class GUIHelper {
             String DBn = "";
             if (result2.isPresent()) {
                 DBn = result2.toString();
-                DBn = DBn.substring(9,DBn.length()-1);
+                DBn = DBn.substring(9, DBn.length() - 1);
             }
 
             TextInputDialog userPrompt = new TextInputDialog("Azure username");
@@ -89,17 +86,15 @@ public class GUIHelper {
             result4.ifPresent(password -> myAzureDBPass = password);
 
             textbox.setText("Starting Azure server...");
-            myServerHelp.startAzureServer(DBUrl, DBn, myAzureDBUser, myAzureDBPass);
-            textbox.setText("Azure Server started! It can take up to 1 minute to get the data.");
+            myServerHelp.startAzureServer(DBUrl, DBn, myAzureDBUser, myAzureDBPass, myScorer);
+            textbox.setText("Azure Server started!");
             System.out.println("Azure Server started!");
-            
         });
 
         MenuItem stopAz = new MenuItem("Stop Azure server");
         stopAz.setOnAction((ActionEvent t) -> {
             textbox.setText("Stopping Azure server...");
-            myServerHelp.stopAzureServer(myAzureServerThread);
-            myAzureServerThread = null;
+            myServerHelp.stopAzureServer();
             textbox.setText("Azure Server stopped!");
             System.out.println("Azure Server stopped!");
         });
@@ -118,7 +113,7 @@ public class GUIHelper {
 
         MenuItem quit = new MenuItem("Exit");
         quit.setOnAction((ActionEvent t) -> {
-            myServerHelp.stopAzureServer(myServerThread);
+            myServerHelp.stopAzureServer();
             System.exit(0);
         });
 
@@ -184,9 +179,8 @@ public class GUIHelper {
         }
         return "";
     }
-    
-    public boolean isAzureRunning()
-    {
+
+    public boolean isAzureRunning() {
         return myServerHelp.isAzureRunning();
     }
 }
