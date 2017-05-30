@@ -7,10 +7,15 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Menu;
@@ -45,6 +50,11 @@ public class GUIHelper {
 
         MenuItem startAz = new MenuItem("Start Azure server");
         startAz.setOnAction((ActionEvent t) -> {
+            if (myServerHelp.isAzureRunning()){
+                textbox.setText("Server already running!");
+                System.out.println("Azure server already running! Nothing to start!");
+                return;
+            }
             textbox.setText("Configuring Azure server...");
             TextInputDialog urlb = new TextInputDialog("xxxx.database.windows.net:1433");
             urlb.setTitle("Azure server");
@@ -55,8 +65,10 @@ public class GUIHelper {
             Optional<String> result = urlb.showAndWait();
             String DBUrl = "";
             if (result.isPresent()) {
-                DBUrl = result.toString();
-                DBUrl = DBUrl.substring(9, DBUrl.length() - 1);
+                DBUrl = result.get();
+            } else {
+                textbox.setText("Azure server not running!");
+                return;
             }
 
             TextInputDialog dbName = new TextInputDialog("CPscores");
@@ -68,8 +80,10 @@ public class GUIHelper {
             Optional<String> result2 = dbName.showAndWait();
             String DBn = "";
             if (result2.isPresent()) {
-                DBn = result2.toString();
-                DBn = DBn.substring(9, DBn.length() - 1);
+                DBn = result2.get();
+            } else {
+                textbox.setText("Azure server not running!");
+                return;
             }
 
             TextInputDialog userPrompt = new TextInputDialog("Azure username");
@@ -77,38 +91,77 @@ public class GUIHelper {
             userPrompt.setHeaderText("Enter your Azure DB username");
             userPrompt.setContentText("Enter your Azure DB username:");
 
-            // Traditional way to get the response value.
             Optional<String> result3 = userPrompt.showAndWait();
-            result3.ifPresent(username -> myAzureDBUser = username);
+            if (result3.isPresent()) {
+                myAzureDBUser = result3.get();
+            } else {
+                textbox.setText("Azure server not running!");
+                return;
+            }
 
             PasswordDialog pwPrompt = new PasswordDialog();
             Optional<String> result4 = pwPrompt.showAndWait();
-            result4.ifPresent(password -> myAzureDBPass = password);
+            if (result4.isPresent()) {
+                myAzureDBPass = result4.get();
+            } else {
+                textbox.setText("Azure server not running!");
+                return;
+            }
 
             textbox.setText("Starting Azure server...");
-            myServerHelp.startAzureServer(DBUrl, DBn, myAzureDBUser, myAzureDBPass, myScorer);
-            textbox.setText("Azure Server started!");
-            System.out.println("Azure Server started!");
+            try {
+                myServerHelp.startAzureServer(DBUrl, DBn, myAzureDBUser, myAzureDBPass, myScorer);
+                textbox.setText("Azure Server started!");
+                System.out.println("Azure Server started!");
+            } catch (SQLException ex) {
+                textbox.setText("Starting azure server failed!");
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Server start failure");
+                alert.setHeaderText("An error occured while starting the server");
+                alert.setContentText(ex.getMessage());
+                alert.showAndWait();
+                System.out.println(ex.getMessage());
+            }
+
+        });
+
+        MenuItem refreshItem = new MenuItem("Refresh data");
+        refreshItem.setOnAction((ActionEvent t) -> {
+            if (myServerHelp.isAzureRunning()) {
+                try {
+                    myScorer.createEverything();
+                } catch (IOException ex) {
+                    Logger.getLogger(GUIHelper.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else {
+                Alert alert = new Alert(AlertType.WARNING);
+                alert.setTitle("Warning");
+                alert.setHeaderText("Server not running!");
+                alert.setContentText("The server is not running! Try setting up the server before refreshing!");
+                alert.showAndWait();
+            }
         });
 
         MenuItem stopAz = new MenuItem("Stop Azure server");
         stopAz.setOnAction((ActionEvent t) -> {
+            if (myServerHelp.isAzureRunning()){
             textbox.setText("Stopping Azure server...");
             myServerHelp.stopAzureServer();
             textbox.setText("Azure Server stopped!");
             System.out.println("Azure Server stopped!");
+            } else {
+                textbox.setText("Azure server not running!");
+                System.out.println("Azure server not running!");
+            }
         });
 
         MenuItem export = new MenuItem("Export to xls");
         export.setOnAction((ActionEvent t) -> {
-            Dialog aboutDiag = new Dialog();
-            aboutDiag.setContentText("1) Open a blank Excel sheet\n2) In the 'Data' tab, choose 'Other sources' --> SQL\n3) Enter the DB location, and enter your DB username and password");
-            aboutDiag.setTitle("Export to Excel");
-            aboutDiag.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
-            Node closeButton = aboutDiag.getDialogPane().lookupButton(ButtonType.CLOSE);
-            closeButton.managedProperty().bind(closeButton.visibleProperty());
-            closeButton.setVisible(false);
-            aboutDiag.showAndWait();
+            Alert alert = new Alert(AlertType.INFORMATION);
+            alert.setTitle("Export to Excel");
+            alert.setHeaderText("How to export to Excel");
+            alert.setContentText("1) Open a blank Excel sheet\n2) In the 'Data' tab, choose 'Other sources' --> SQL\n3) Enter the DB location, and enter your DB username and password");
+            alert.showAndWait();
         });
 
         MenuItem quit = new MenuItem("Exit");
@@ -119,18 +172,15 @@ public class GUIHelper {
 
         MenuItem about = new MenuItem("About...");
         about.setOnAction((ActionEvent t) -> {
-            Dialog aboutDiag = new Dialog();
-            aboutDiag.setContentText("Created by @billwi and @hexalellogram for the VHS CyberPatriot team!\nShoutout to Mr. Osborne for running CyberPatriot, Irvin for guiding us, and Mr. Parker for giving us the knowledge to create this scoreboard!\n\nThis is licensed under the GNU/GPL V3 Public license!");
-            aboutDiag.setTitle("About CyberTiger Scoreboard");
-            aboutDiag.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
-            Node closeButton = aboutDiag.getDialogPane().lookupButton(ButtonType.CLOSE);
-            closeButton.managedProperty().bind(closeButton.visibleProperty());
-            closeButton.setVisible(false);
-            aboutDiag.showAndWait();
+            Alert alert = new Alert(AlertType.INFORMATION);
+            alert.setTitle("About CyberTiger Scoreboard");
+            alert.setHeaderText("About the CyberTiger Scoreboard");
+            alert.setContentText("Created by @billwi and @hexalellogram for the VHS CyberPatriot team!\nShoutout to Mr. Osborne for running CyberPatriot, Irvin for guiding us, and Mr. Parker for giving us the knowledge to create this scoreboard!\n\nThis is licensed under the GNU/GPL V3 Public license!");
+            alert.showAndWait();
         });
 
         fileMenu.getItems().addAll(export, quit);
-        serverMenu.getItems().addAll(startAz, stopAz);
+        serverMenu.getItems().addAll(startAz, refreshItem, stopAz);
         helpMenu.getItems().addAll(about);
         menuBar.getMenus().addAll(fileMenu, serverMenu, helpMenu);
 

@@ -21,13 +21,12 @@ public class ServerHelper {
 
     private String connUrl;
     private boolean myAzureStatus;
-    
-    public ServerHelper()
-    {
+
+    public ServerHelper() {
         myAzureStatus = false;
     }
 
-    public void startAzureServer(String dbUrl, String dbName, String username, String password, CPscorereport scorer){
+    public void startAzureServer(String dbUrl, String dbName, String username, String password, CPscorereport scorer) throws SQLException {
         System.out.println("Azure Server started!");
         try {
             System.out.print("Attempting connection...");
@@ -37,10 +36,10 @@ public class ServerHelper {
             System.out.println(" Conected!\n");
             myAzureStatus = true;
             scorer.createEverything();
-        } catch (ClassNotFoundException | SQLException ex) {
-
-            System.out.println(" Error! An issue....\n" + ex);
-            System.out.println("It is possible that your IP is blacklisted!\nYour ip is:");
+        } catch (ClassNotFoundException | SQLException | IOException ex) {
+            String error = "";
+            error += "An error has occured:\n" + ex.getMessage();
+            error += "\nIt is possible that your IP is blacklisted!";
             URL whatismyip = null;
             try {
                 whatismyip = new URL("http://checkip.amazonaws.com");
@@ -51,7 +50,7 @@ public class ServerHelper {
             try {
                 in = new BufferedReader(new InputStreamReader(whatismyip.openStream()));
                 String ip = in.readLine();
-                System.out.println(ip);
+                error += "\nYou are trying to connect from " + ip;
             } catch (IOException ex1) {
                 Logger.getLogger(ServerHelper.class.getName()).log(Level.SEVERE, null, ex1);
             } finally {
@@ -62,9 +61,9 @@ public class ServerHelper {
                     }
                 }
             }
+            error += "\nYour username is " + username + ", and you are trying to connect to " + dbName;
             myAzureStatus = false;
-        } catch (IOException ex) {
-            Logger.getLogger(ServerHelper.class.getName()).log(Level.SEVERE, null, ex);
+            throw new SQLException(error);
         }
     }
 
@@ -79,9 +78,8 @@ public class ServerHelper {
         }
         return "";
     }
-    
-    public boolean isAzureRunning()
-    {
+
+    public boolean isAzureRunning() {
         return myAzureStatus;
     }
 }
