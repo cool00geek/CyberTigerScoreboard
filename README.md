@@ -2,23 +2,17 @@
 A scoring graph system, inspired by the official CyberPatriot Scoring Engine and Scoreboard
 
 ## Story
-This was created to allow students at my High School to better prepare for the CyberPatriot competitions in a real-life competitive scenario. Many scoring engines were hard to configure and/or had limited customization. Only one had online integration but difficult to configure, so I created this. It consists of a Java graph system and a netcat based port. By default it listens on port 1947, but can be changed. Currently this is a scoreboard only and relies on existing scoring systems such as [CyberPatriot Scoring Engine](https://www.uscyberpatriot.org/competition/training-materials/practice-images) to score the virtual machine. All that CyberTigerScoreboard's client portion does is send the parsed scoring information to a central server. The server then displays the received scoring info on a graph.
+This was created to allow students at my High School to better prepare for the CyberPatriot competitions in a real-life competitive scenario. Many scoring engines were hard to configure and/or had limited customization. Only one had online integration but difficult to configure (and now defunct), so I created this. It consists of a JavaFX graph system and a "server" which gets data from a Microsoft Azure server. It is currently using my Azure server through Microsoft Image, but has a wizard to configure to use your own Microsoft SQL server, not necessarily limited to Azure. Currently this is a scoreboard only and relies on an existing scoring system which can upload data to an SQL server, in the format of `teamname-OS`, `Score`, `Time`, where `score` and `time` are `ints`. `teamname-OS` should have the OS part starting with either `lin` or `win`, and a custom name after that. The graph then displays the received scoring info from the SQL DB on a graph.
 
 ## Usage
-Have the local firewall allow traffic through port 1947. It can be on a local intranet or internet. The client (images) have to send tcp data to that port (can be done with netcat, powershell, many things), in the format of `hostname score`. The hostname can be any way to identify a particular user, such as team name. It is strictly for display purposes on the graph.
-
-OR  
----------  
-You can setup an Azure server and use the Azure one! It connects with an Azure SQL server.
-
-
+The images should be using a Microsoft SQL command line tool on a loop or startup job or daemon to simply client side setup. Here, you simply need to go to `Server --> Start Azure server` and follow the prompts to get started
 
 ## Pics
 ### Mockup
 ![Mockup](/res/mockup.png)
 ### Working all teams display
-![Mockup](/res/AllTeams.png)
+![All Teams](/res/AllTeams.png)
 ### Working specific team display
-![Mockup](/res/MultiOSOneTeam.png)
+![Specific Team](/res/MultiOSOneTeam.png)
 
 GNU/GPL V3 license
