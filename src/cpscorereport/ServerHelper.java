@@ -6,12 +6,9 @@ package cpscorereport;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -19,67 +16,49 @@ import java.util.logging.Logger;
  */
 public class ServerHelper {
 
-    private String connUrl;
-    private boolean myAzureStatus;
+    private String connUrl; // Hold the connection URL
+    private boolean myAzureStatus; // Check if it's running or not
 
     public ServerHelper() {
-        myAzureStatus = false;
+        myAzureStatus = false; // Since we're just starting it, it will be false
     }
 
     public void startAzureServer(String dbUrl, String dbName, String username, String password, CPscorereport scorer) throws SQLException {
-        System.out.println("Azure Server started!");
         try {
-            System.out.print("Attempting connection...");
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver"); // Set the class to connect
             connUrl = "jdbc:sqlserver://" + dbUrl + ";database=" + dbName + ";user=" + username + "@ctsb;password=" + password + ";encrypt=true;trustServerCertificate=true;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
-            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-            DriverManager.getConnection(connUrl);
-            System.out.println(" Conected!\n");
-            myAzureStatus = true;
-            scorer.createEverything();
-        } catch (ClassNotFoundException | SQLException | IOException ex) {
-            String error = "";
-            error += "An error has occured:\n" + ex.getMessage();
+            DriverManager.getConnection(connUrl); // Get the URL to connect
+            myAzureStatus = true; // Now that it's started...
+            scorer.refreshData(); // Refresh data
+        } catch (ClassNotFoundException | SQLException | IOException ex) { // Something happened
+            String error = "An error has occured:\n" + ex.getMessage(); // Show them error stuff
             error += "\nIt is possible that your IP is blacklisted!";
-            URL whatismyip = null;
             try {
-                whatismyip = new URL("http://checkip.amazonaws.com");
-            } catch (MalformedURLException ex1) {
-                Logger.getLogger(ServerHelper.class.getName()).log(Level.SEVERE, null, ex1);
-            }
-            BufferedReader in = null;
-            try {
-                in = new BufferedReader(new InputStreamReader(whatismyip.openStream()));
-                String ip = in.readLine();
+                URL whatismyip = new URL("http://checkip.amazonaws.com"); // Get the IP
+                BufferedReader in = new BufferedReader(new InputStreamReader(whatismyip.openStream()));
+                String ip = in.readLine(); // Get the IP from the amazon URL
                 error += "\nYou are trying to connect from " + ip;
-            } catch (IOException ex1) {
-                Logger.getLogger(ServerHelper.class.getName()).log(Level.SEVERE, null, ex1);
-            } finally {
-                if (in != null) {
-                    try {
-                        in.close();
-                    } catch (IOException e) {
-                    }
-                }
+                error += "\nYour username is " + username + ", and you are trying to connect to " + dbName; // Tell them some more info
+            } catch (IOException ex1) { // We couldn't get an internet connection
+                error = "There was an error generating the error! Please check your internet connection:\n" + ex1; // Tell them we couldnt generate the error
             }
-            error += "\nYour username is " + username + ", and you are trying to connect to " + dbName;
-            myAzureStatus = false;
-            throw new SQLException(error);
+            myAzureStatus = false; // Since we're catching it, something didn't run, so stop it
+            throw new SQLException(error); // Throw the error
         }
     }
 
     public void stopAzureServer() {
-        myAzureStatus = false;
-        System.out.println("Stopping server...");
+        myAzureStatus = false; // Just set it to false
     }
 
     public String getURL() {
-        if (connUrl != null) {
-            return connUrl;
+        if (connUrl != null) { // If it has been initialized
+            return connUrl; // Return it
         }
-        return "";
+        return ""; // Otherwise, just return it as an empty string
     }
 
-    public boolean isAzureRunning() {
-        return myAzureStatus;
+    public boolean isAzureRunning() { // Check if it's running
+        return myAzureStatus; // Give it
     }
 }
