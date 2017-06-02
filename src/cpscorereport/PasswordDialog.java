@@ -14,9 +14,9 @@ public class PasswordDialog extends Dialog<String> {
 
   public PasswordDialog() {
     setTitle("Azure Password");
-    setHeaderText("Please enter your Azure password.");
+    setHeaderText("Please enter your Azure password: ");
 
-    ButtonType passwordButtonType = new ButtonType("Decrypt", ButtonData.OK_DONE);
+    ButtonType passwordButtonType = new ButtonType("Login", ButtonData.OK_DONE);
     getDialogPane().getButtonTypes().addAll(passwordButtonType, ButtonType.CANCEL);
 
     passwordField = new PasswordField();
