@@ -59,6 +59,6 @@ public class ServerHelper {
     }
 
     public boolean isAzureRunning() { // Check if it's running
-        return myAzureStatus; // Give it
+        return myAzureStatus; // Send out the status
     }
 }

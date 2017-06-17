@@ -1,7 +1,8 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * How 'bout you don't touch this source?
+ * Submit a pull request and problemo solved.
+ * Use it at your own will honestly, just if it's a big competition scenario,
+ *      give me a shoutout... please? Thanks!
  */
 package cpscorereport;
 
@@ -52,10 +53,10 @@ public class DataBaseConnection {
                 String ip = in.readLine(); // Get the IP
                 System.out.println(ip); // Print it out
             } catch (IOException ex1) {
-                System.out.println("An error occured while printint the error:\n" + ex1);
+                System.out.println("An error occured while printing the error:\n" + ex1.getMessage());
             }
         }
-        return teams;
+        return teams; // Give them the teams array
     }
 
     private static int doesTeamExist(ArrayList<Team> teams, String teamName) {
