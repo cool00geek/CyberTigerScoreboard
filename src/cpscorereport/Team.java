@@ -51,7 +51,9 @@ public class Team implements Comparable {
     }
 
     public void addScore(Score toAdd, String OS) {
+        System.out.println("We are adding an OS");
         if (OS.toLowerCase().contains("win")) {
+            System.out.println("It's Windows");
             if (myWin1Name != null && OS.equals(myWin1Name)) {
                 myWindows1Scores.add(toAdd);
             } else if (myWin2Name != null && OS.equals(myWin2Name)) {
@@ -75,23 +77,30 @@ public class Team implements Comparable {
                 myOSCount++;
             }
         } else if (OS.toLowerCase().contains("lin")) {
+            System.out.println("It's linux");
             if (myLin1Name != null && OS.equals(myLin1Name)) {
+                System.out.println("It is Linux 1...");
                 myLinux1Scores.add(toAdd);
             } else if (myLin2Name != null && OS.equals(myLin2Name)) {
+                System.out.println("It is lin2 and it exists");
                 myLinux2Scores.add(toAdd);
             } else if (myLin3Name != null && OS.equals(myLin3Name)) {
+                System.out.println("It is lin3 and it exists");
                 myLinux3Scores.add(toAdd);
             } else if (myLin1Name == null) {
+                System.out.println("New image! Lin1");
                 myLinux1Scores = new ArrayList<>();
                 myLinux1Scores.add(toAdd);
                 myLin1Name = OS;
                 myOSCount++;
             } else if (myLin2Name == null) {
+                System.out.println("New image! Lin2");
                 myLinux2Scores = new ArrayList<>();
                 myLinux2Scores.add(toAdd);
                 myLin2Name = OS;
                 myOSCount++;
             } else if (myLin3Name == null) {
+                System.out.println("New image! Lin3");
                 myLinux3Scores = new ArrayList<>();
                 myLinux3Scores.add(toAdd);
                 myLin3Name = OS;
