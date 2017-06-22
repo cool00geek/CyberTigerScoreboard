@@ -116,7 +116,6 @@ public class CPscorereport extends Application {
                 scoreSeries[seriesPos] = new XYChart.Series(); // Set the series tehre
                 thisSeries.setName("Scores for team " + teams.get(i - 1).getTeamName() + " " + OSName.get(j)); // Set the title
                 scoreSeries[seriesPos].setName("Scores for team " + teams.get(i - 1).getTeamName() + " " + OSName.get(j)); // Set the graph for the all teams tab
-                System.out.println("The score length is" + scores.size());
                 for (int k = 0; k < scores.size(); k++) { // Add every score
                     int time = scores.get(k).getTimeInt(); // Get the time
                     int score = scores.get(k).getScore(); // Get the score
