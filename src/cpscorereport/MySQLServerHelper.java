@@ -1,0 +1,60 @@
+package cpscorereport;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+public class MySQLServerHelper implements IServerHelper {
+	private boolean status = false;
+	private String connUrl;
+	@Override
+	public void startServer(String dbUrl, String dbName, String username, String password, CPscorereport scorer)
+			throws SQLException {
+		try {
+			Class.forName("com.mysql.jbdc.Driver");
+			connUrl="jdbc:mysql://"+dbUrl+"/"+dbName+"?user="+username+"&password="+password;
+			DriverManager.getConnection(connUrl);
+			scorer.refreshData();
+			
+		} catch (ClassNotFoundException|SQLException|IOException e) {
+            String error = "An error has occured:\n" + e.getMessage(); // Show them error stuff
+            error += "\nIt is possible that your IP is blacklisted!";
+            try {
+                URL whatismyip = new URL("http://checkip.amazonaws.com"); // Get the IP
+                BufferedReader in = new BufferedReader(new InputStreamReader(whatismyip.openStream()));
+                String ip = in.readLine(); // Get the IP from the amazon URL
+                error += "\nYou are trying to connect from " + ip;
+                error += "\nYour username is " + username + ", and you are trying to connect to " + dbName; // Tell them some more info
+            } catch (IOException ex1) { // We couldn't get an internet connection
+                error = "There was an error generating the error! Please check your internet connection:\n" + ex1; // Tell them we couldnt generate the error
+            }
+            status = false; // Since we're catching it, something didn't run, so stop it
+            throw new SQLException(error); // Throw the error
+		}
+		
+
+	}
+
+	@Override
+	public void stopServer() {
+		status=false;
+	}
+
+	@Override
+	public boolean isRunning() {
+		return status;
+	}
+
+	@Override
+	public String getURL() {
+		if (status) {
+			return connUrl;
+		} else {
+			return "";
+		}
+	}
+
+}

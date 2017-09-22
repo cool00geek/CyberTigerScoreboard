@@ -14,16 +14,16 @@ import java.sql.SQLException;
  *
  * @author 054457
  */
-public class ServerHelper {
+public class AzureServerHelper implements IServerHelper {
 
     private String connUrl; // Hold the connection URL
     private boolean myAzureStatus; // Check if it's running or not
 
-    public ServerHelper() {
+    public AzureServerHelper() {
         myAzureStatus = false; // Since we're just starting it, it will be false
     }
 
-    public void startAzureServer(String dbUrl, String dbName, String username, String password, CPscorereport scorer) throws SQLException {
+    public void startServer(String dbUrl, String dbName, String username, String password, CPscorereport scorer) throws SQLException {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver"); // Set the class to connect
             connUrl = "jdbc:sqlserver://" + dbUrl + ";database=" + dbName + ";user=" + username + "@ctsb;password=" + password + ";encrypt=true;trustServerCertificate=true;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
@@ -47,7 +47,7 @@ public class ServerHelper {
         }
     }
 
-    public void stopAzureServer() {
+    public void stopServer() {
         myAzureStatus = false; // Just set it to false
     }
 
@@ -58,7 +58,7 @@ public class ServerHelper {
         return ""; // Otherwise, just return it as an empty string
     }
 
-    public boolean isAzureRunning() { // Check if it's running
+    public boolean isRunning() { // Check if it's running
         return myAzureStatus; // Send out the status
     }
 }

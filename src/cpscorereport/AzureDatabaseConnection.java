@@ -22,7 +22,7 @@ import java.sql.Statement;
  *
  * @author Vinay
  */
-public class DataBaseConnection {
+public class AzureDatabaseConnection implements IDatabaseConnection {
 
     public static ArrayList<Team> loadList(String connectionString) throws MalformedURLException, IOException {
         ArrayList<Team> teams = new ArrayList<>(); // Create the team arraylist
