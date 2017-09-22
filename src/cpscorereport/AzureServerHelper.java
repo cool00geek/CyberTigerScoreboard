@@ -24,7 +24,8 @@ public class AzureServerHelper implements IServerHelper {
     }
 
     public void startServer(String dbUrl, String dbName, String username, String password, CPscorereport scorer) throws SQLException {
-        try {
+        
+    	try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver"); // Set the class to connect
             connUrl = "jdbc:sqlserver://" + dbUrl + ";database=" + dbName + ";user=" + username + "@ctsb;password=" + password + ";encrypt=true;trustServerCertificate=true;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
             DriverManager.getConnection(connUrl); // Get the URL to connect

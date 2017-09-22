@@ -30,7 +30,7 @@ public class GUIHelper {
     public GUIHelper(CPscorereport scorer) {
         myAzureDBUser = ""; // Initialize variables
         myAzureDBPass = "";
-        myServerHelp = null;
+        myServerHelp = new DummyServerHelper();
         myScorer = scorer; // Make sure it already exists
     }
 
@@ -267,4 +267,8 @@ public class GUIHelper {
 
         return text; // Give it to them
     }
+
+	public IDatabaseConnection newDbConn() {
+		return myServerHelp.newDbConn();
+	}
 }

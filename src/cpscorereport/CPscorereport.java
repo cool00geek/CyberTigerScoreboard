@@ -79,7 +79,8 @@ public class CPscorereport extends Application {
         ArrayList<Team> teams; // Create an arraylist of the teams
         String url = setUpHelp.getConnURL(); // Get the database connection URL
         if (setUpHelp.isDBRunning()) { // Make sure the server is running first
-            info.setText("Refreshing data..."); // Let the user know it's refreshing
+        	dbConn=setUpHelp.newDbConn();
+        	info.setText("Refreshing data..."); // Let the user know it's refreshing
             teams = dbConn.loadList(url); // Get the URL to load
         } else {
             info.setText("Server not running!"); // Tell the user the status

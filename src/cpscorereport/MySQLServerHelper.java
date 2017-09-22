@@ -14,7 +14,7 @@ public class MySQLServerHelper implements IServerHelper {
 	public void startServer(String dbUrl, String dbName, String username, String password, CPscorereport scorer)
 			throws SQLException {
 		try {
-			Class.forName("com.mysql.jbdc.Driver");
+			Class.forName("com.mysql.jdbc.Driver");
 			connUrl="jdbc:mysql://"+dbUrl+"/"+dbName+"?user="+username+"&password="+password;
 			DriverManager.getConnection(connUrl);
 			scorer.refreshData();
