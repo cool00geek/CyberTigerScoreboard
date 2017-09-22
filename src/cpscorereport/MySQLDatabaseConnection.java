@@ -1,9 +1,3 @@
-/*
- * How 'bout you don't touch this source?
- * Submit a pull request and problemo solved.
- * Use it at your own will honestly, just if it's a big competition scenario,
- *      give me a shoutout... please? Thanks!
- */
 package cpscorereport;
 
 import java.io.BufferedReader;
@@ -11,25 +5,22 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
-/**
- *
- * @author Vinay
- */
-public class AzureDatabaseConnection implements IDatabaseConnection {
+public class MySQLDatabaseConnection implements IDatabaseConnection {
 
-    public ArrayList<Team> loadList(String connectionString) throws MalformedURLException, IOException {
+	@Override
+	public ArrayList<Team> loadList(String url) throws MalformedURLException, IOException {
         ArrayList<Team> teams = new ArrayList<>(); // Create the team arraylist
 
         try {
-            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver"); // Setup the JDBC connection class
-            Connection conn = DriverManager.getConnection(connectionString); // Create the connection
+            Class.forName("com.mysql.jbdc.Driver"); // Setup the JDBC connection class
+            Connection conn = DriverManager.getConnection(url); // Create the connection
             Statement st = conn.createStatement(); // Prepare the statement
             ResultSet rs = st.executeQuery("SELECT * FROM TeamScores"); // Get the query
             while (rs.next()) { // Get all the data until none is left
@@ -57,8 +48,7 @@ public class AzureDatabaseConnection implements IDatabaseConnection {
             }
         }
         return teams; // Give them the teams array
-    }
-
+	}
     private int doesTeamExist(ArrayList<Team> teams, String teamName) {
         for (int i = 0; i < teams.size(); i++) // Go through all teams
         {

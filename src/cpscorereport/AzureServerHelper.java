@@ -61,4 +61,9 @@ public class AzureServerHelper implements IServerHelper {
     public boolean isRunning() { // Check if it's running
         return myAzureStatus; // Send out the status
     }
+
+	@Override
+	public IDatabaseConnection newDbConn() {
+		return new AzureDatabaseConnection();
+	}
 }

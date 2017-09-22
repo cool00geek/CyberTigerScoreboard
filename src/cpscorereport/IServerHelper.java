@@ -7,4 +7,5 @@ public interface IServerHelper {
 	public void stopServer();
 	public boolean isRunning();
 	public String getURL();
+	public IDatabaseConnection newDbConn();
 }

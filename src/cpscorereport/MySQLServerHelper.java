@@ -57,4 +57,9 @@ public class MySQLServerHelper implements IServerHelper {
 		}
 	}
 
+	@Override
+	public IDatabaseConnection newDbConn() {
+		return new MySQLDatabaseConnection();
+	}
+
 }
