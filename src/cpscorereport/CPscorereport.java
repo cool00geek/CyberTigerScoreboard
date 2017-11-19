@@ -42,6 +42,7 @@ public class CPscorereport extends Application {
     private MenuBar menuBar; // The menubar on top with the different categories
     private BorderPane borderPane; // The main pane with stuff
     private StackPane elementSect; // The pane inside ^ to contain the objects
+    private IDatabaseConnection dbConn;
 
     @Override
     public void start(Stage mainWin) throws IOException {
@@ -77,9 +78,10 @@ public class CPscorereport extends Application {
     public void refreshData() throws IOException {
         ArrayList<Team> teams; // Create an arraylist of the teams
         String url = setUpHelp.getConnURL(); // Get the database connection URL
-        if (setUpHelp.isAzureRunning()) { // Make sure the server is running first
-            info.setText("Refreshing data..."); // Let the user know it's refreshing
-            teams = DataBaseConnection.loadList(url); // Get the URL to load
+        if (setUpHelp.isDBRunning()) { // Make sure the server is running first
+        	dbConn=setUpHelp.newDbConn();
+        	info.setText("Refreshing data..."); // Let the user know it's refreshing
+            teams = dbConn.loadList(url); // Get the URL to load
         } else {
             info.setText("Server not running!"); // Tell the user the status
             return; // Don't do anything

@@ -12,15 +12,15 @@ import javafx.scene.layout.Priority;
 public class PasswordDialog extends Dialog<String> {
   private PasswordField passwordField;
 
-  public PasswordDialog() {
-    setTitle("Azure Password");
-    setHeaderText("Please enter your Azure password: ");
+  public PasswordDialog(String whatFor) {
+    setTitle(whatFor+" Password");
+    setHeaderText("Please enter your "+whatFor+" password: ");
 
     ButtonType passwordButtonType = new ButtonType("Login", ButtonData.OK_DONE);
     getDialogPane().getButtonTypes().addAll(passwordButtonType, ButtonType.CANCEL);
 
     passwordField = new PasswordField();
-    passwordField.setPromptText("Azure password");
+    passwordField.setPromptText(whatFor+" password");
 
     HBox hBox = new HBox();
     hBox.getChildren().add(passwordField);

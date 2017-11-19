@@ -22,9 +22,9 @@ import java.sql.Statement;
  *
  * @author Vinay
  */
-public class DataBaseConnection {
+public class AzureDatabaseConnection implements IDatabaseConnection {
 
-    public static ArrayList<Team> loadList(String connectionString) throws MalformedURLException, IOException {
+    public ArrayList<Team> loadList(String connectionString) throws MalformedURLException, IOException {
         ArrayList<Team> teams = new ArrayList<>(); // Create the team arraylist
 
         try {
@@ -59,7 +59,7 @@ public class DataBaseConnection {
         return teams; // Give them the teams array
     }
 
-    private static int doesTeamExist(ArrayList<Team> teams, String teamName) {
+    private int doesTeamExist(ArrayList<Team> teams, String teamName) {
         for (int i = 0; i < teams.size(); i++) // Go through all teams
         {
             if (teams.get(i).getTeamName().equals(teamName)) // Check if the teamname exists

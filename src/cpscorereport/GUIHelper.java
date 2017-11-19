@@ -24,13 +24,13 @@ public class GUIHelper {
 
     private String myAzureDBUser; // The database username
     private String myAzureDBPass; // The DB password
-    private final ServerHelper myServerHelp; // The server helper for the GUI Helper
+    private IServerHelper myServerHelp; // The server helper for the GUI Helper
     private final CPscorereport myScorer; // The scorer to refresh if required
 
     public GUIHelper(CPscorereport scorer) {
         myAzureDBUser = ""; // Initialize variables
         myAzureDBPass = "";
-        myServerHelp = new ServerHelper();
+        myServerHelp = new DummyServerHelper();
         myScorer = scorer; // Make sure it already exists
     }
 
@@ -42,7 +42,7 @@ public class GUIHelper {
 
         MenuItem startAz = new MenuItem("Start Azure server"); // Have an option to start the Azure server 
         startAz.setOnAction((ActionEvent t) -> {
-            if (myServerHelp.isAzureRunning()) { // If it's already running,
+            if (myServerHelp.isRunning()) { // If it's already running,
                 textbox.setText("Server already running!"); // Tell them
                 return; // And exit
             }
@@ -88,7 +88,7 @@ public class GUIHelper {
                 return; // and exit
             }
 
-            PasswordDialog pwPrompt = new PasswordDialog(); // Get the password dialog
+            PasswordDialog pwPrompt = new PasswordDialog("Azure"); // Get the password dialog
             Optional<String> result4 = pwPrompt.showAndWait(); // Get the result
             if (result4.isPresent()) { // Check if they entered it
                 myAzureDBPass = result4.get(); // Get the password
@@ -99,7 +99,8 @@ public class GUIHelper {
 
             textbox.setText("Starting Azure server..."); // Let them know we're trying to start
             try {
-                myServerHelp.startAzureServer(DBUrl, DBn, myAzureDBUser, myAzureDBPass, myScorer); // Start it
+                myServerHelp = new AzureServerHelper();
+            	myServerHelp.startServer(DBUrl, DBn, myAzureDBUser, myAzureDBPass, myScorer); // Start it
                 textbox.setText("Azure Server started!"); // Tell them it started
             } catch (SQLException ex) { // We would have an exception otherwise
                 textbox.setText("Starting azure server failed!"); // Dialog to tell them it didn't work
@@ -111,9 +112,84 @@ public class GUIHelper {
             }
         });
 
+        MenuItem startMy = new MenuItem("Start MySQL server"); // Have an option to start the Azure server 
+        startMy.setOnAction((ActionEvent t) -> {
+            if (myServerHelp.isRunning()) { // If it's already running,
+                textbox.setText("Server already running!"); // Tell them
+                return; // And exit
+            }
+            textbox.setText("Configuring MySQL server..."); // Otherwise, tell them
+            TextInputDialog urlb = new TextInputDialog("localhost:3306"); // Give them a URL template
+            urlb.setTitle("MySQL server"); // Set the dialog's title
+            urlb.setHeaderText("Enter your MySQL server location (URL)"); // Set the URL location
+            urlb.setContentText("Enter your MySQL server location (URL):"); // Give a prompt
+
+            Optional<String> result = urlb.showAndWait(); // Get the result
+            String DBUrl; // Cretae the string to hold onto the URL
+            if (result.isPresent()) { // Check if they hit ok
+                DBUrl = result.get(); // Then get it
+            } else {
+                textbox.setText("MySQL server not running!"); // Tell them it isn't running still
+                return; // And exit since they hit cancel
+            }
+
+            TextInputDialog dbName = new TextInputDialog("CPscores"); // The next dialog asks for the DB name: CPscores is default
+            dbName.setTitle("MySQL DB"); // Set the title of the db
+            dbName.setHeaderText("Enter your MySQL Database name"); // Ask for their one
+            dbName.setContentText("Enter your MySQL Database name:"); // Prompt
+
+            Optional<String> result2 = dbName.showAndWait(); // Get the result
+            String DBn; // String to hold it
+            if (result2.isPresent()) { // Check if they hit ok or cancel
+                DBn = result2.get(); // Get it 
+            } else {
+                textbox.setText("MySQL server not running!"); // Tell them it isn't running
+                return; // Exit
+            }
+
+            TextInputDialog userPrompt = new TextInputDialog("MySQL username"); // Ask for the username
+            userPrompt.setTitle("MySQL login"); // Set the title
+            userPrompt.setHeaderText("Enter your MySQL DB username"); // Ask for their username
+            userPrompt.setContentText("Enter your MySQL DB username:"); // Prompt
+
+            Optional<String> result3 = userPrompt.showAndWait(); // Get the result
+            if (result3.isPresent()) { // If they hit ok
+                myAzureDBUser = result3.get(); // get the value
+            } else {
+                textbox.setText("MySQL server not running!"); // Otherwise tell them it still isn't running
+                return; // and exit
+            }
+
+            PasswordDialog pwPrompt = new PasswordDialog("MySQL"); // Get the password dialog
+            Optional<String> result4 = pwPrompt.showAndWait(); // Get the result
+            if (result4.isPresent()) { // Check if they entered it
+                myAzureDBPass = result4.get(); // Get the password
+            } else {
+                textbox.setText("MySQL server not running!"); // Tell them it still isn't running
+                return; //exit
+            }
+
+            textbox.setText("Starting MySQL server..."); // Let them know we're trying to start
+            try {
+                myServerHelp = new MySQLServerHelper();
+            	myServerHelp.startServer(DBUrl, DBn, myAzureDBUser, myAzureDBPass, myScorer); // Start it
+                textbox.setText("MySQL Server started!"); // Tell them it started
+            } catch (SQLException ex) { // We would have an exception otherwise
+                textbox.setText("Starting MySQL server failed!"); // Dialog to tell them it didn't work
+                Alert alert = new Alert(AlertType.ERROR); // Give an error alert
+                alert.setTitle("Server start failure"); // Tell them it failed
+                alert.setHeaderText("An error occured while starting the server"); // Tell them something is wrong
+                alert.setContentText(ex.getMessage()); // Give the message
+                alert.showAndWait(); // Show the error
+            }
+        });
+
+
+
+     
         MenuItem refreshItem = new MenuItem("Refresh data"); // Get the refresh button
         refreshItem.setOnAction((ActionEvent t) -> {
-            if (myServerHelp.isAzureRunning()) { // Make sure it's running
+            if (myServerHelp.isRunning()) { // Make sure it's running
                 try {
                     myScorer.refreshData(); // Refresh
                 } catch (IOException ex) {
@@ -128,17 +204,17 @@ public class GUIHelper {
             }
         });
 
-        MenuItem stopAz = new MenuItem("Stop Azure server"); // Stop it
-        stopAz.setOnAction((ActionEvent t) -> {
-            if (myServerHelp.isAzureRunning()) { // Make sure it's running
-                textbox.setText("Stopping Azure server..."); // Tell them it's stopping
-                myServerHelp.stopAzureServer(); // Stop it
-                textbox.setText("Azure Server stopped!"); // Tell them it stopped
+        MenuItem stopDB = new MenuItem("Stop server"); // Stop it
+        stopDB.setOnAction((ActionEvent t) -> {
+            if (myServerHelp.isRunning()) { // Make sure it's running
+                textbox.setText("Stopping DB server..."); // Tell them it's stopping
+                myServerHelp.stopServer(); // Stop it
+                textbox.setText("DB Server stopped!"); // Tell them it stopped
             } else {
-                textbox.setText("Azure server not running!"); // It already isn't running!
+                textbox.setText("DB server not running!"); // It already isn't running!
             }
         });
-
+        
         MenuItem export = new MenuItem("Export to xls"); // Export to excel
         export.setOnAction((ActionEvent t) -> {
             Alert alert = new Alert(AlertType.INFORMATION); // Show an alert
@@ -150,7 +226,7 @@ public class GUIHelper {
 
         MenuItem quit = new MenuItem("Exit"); // Option to exit
         quit.setOnAction((ActionEvent t) -> {
-            myServerHelp.stopAzureServer(); // Stop the server
+            myServerHelp.stopServer(); // Stop the server
             System.exit(0); // Close
         });
 
@@ -164,7 +240,7 @@ public class GUIHelper {
         });
 
         fileMenu.getItems().addAll(export, quit); // Add the items to the about button
-        serverMenu.getItems().addAll(startAz, refreshItem, stopAz); // Add the items to the server option
+        serverMenu.getItems().addAll(startAz, startMy, refreshItem, stopDB); // Add the items to the server option
         helpMenu.getItems().addAll(about); // Add it to the about section
         
         menuBar.getMenus().addAll(fileMenu, serverMenu, helpMenu); // Add all options to the menu
@@ -178,8 +254,11 @@ public class GUIHelper {
         return "";
     }
 
-    public boolean isAzureRunning() {
-        return myServerHelp.isAzureRunning();
+    public boolean isDBRunning() {
+    	if(myServerHelp==null){
+    		return false;
+    	}
+        return myServerHelp.isRunning();
     }
 
     public Text createTextBox(String defText) {
@@ -188,4 +267,8 @@ public class GUIHelper {
 
         return text; // Give it to them
     }
+
+	public IDatabaseConnection newDbConn() {
+		return myServerHelp.newDbConn();
+	}
 }
