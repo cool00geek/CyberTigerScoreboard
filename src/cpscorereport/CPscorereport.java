@@ -3,6 +3,8 @@
  */
 package cpscorereport;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -32,8 +34,8 @@ import javafx.util.Duration;
  */
 public class CPscorereport extends Application {
 
-    final private double DEFAULT_WIDTH = 1366; // Default width for 720p
-    final private double DEFAULT_HEIGHT = 720; // Default height for 720p
+    private double DEFAULT_WIDTH = 1366; // Default width for 720p
+    private double DEFAULT_HEIGHT = 720; // Default height for 720p
     final private String ICON_LOC = "/resources/icon.png"; // The location of the icon
     final private int REFRESH_TIMEOUT = 60; // Delay in seconds between refreshes
     private GUIHelper setUpHelp; // A helper class to setup GUI components
@@ -46,6 +48,10 @@ public class CPscorereport extends Application {
 
     @Override
     public void start(Stage mainWin) throws IOException {
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        DEFAULT_HEIGHT = screenSize.height - 100;
+        DEFAULT_WIDTH = screenSize.width - 100;
+
         teamTabs = new TabPane(); // Initialize the pane with for the tabs
         setUpHelp = new GUIHelper(this); // Initialize the GUI helper class
         info = setUpHelp.createTextBox("Server not configured!"); // Initialize the textbox
@@ -79,8 +85,8 @@ public class CPscorereport extends Application {
         ArrayList<Team> teams; // Create an arraylist of the teams
         String url = setUpHelp.getConnURL(); // Get the database connection URL
         if (setUpHelp.isDBRunning()) { // Make sure the server is running first
-        	dbConn=setUpHelp.newDbConn();
-        	info.setText("Refreshing data..."); // Let the user know it's refreshing
+            dbConn = setUpHelp.newDbConn();
+            info.setText("Refreshing data..."); // Let the user know it's refreshing
             teams = dbConn.loadList(url); // Get the URL to load
         } else {
             info.setText("Server not running!"); // Tell the user the status
@@ -136,7 +142,7 @@ public class CPscorereport extends Application {
         NumberAxis xAx = new NumberAxis(); // Create the axis for time
         xAx.setLabel("Running Time"); // Set the running time
         NumberAxis yAx = new NumberAxis(); // Set the y axis for points
-        yAx.setLabel("Points"); // Set the name 
+        yAx.setLabel("Points"); // Set the name
         LineChart allChart = new LineChart(xAx, yAx); // Create the chart
         allChart.setTitle("Scoreboard: All Teams"); // Set the chart's title
         allChart.getData().addAll(Arrays.asList(scoreSeries)); // Add all the data we need

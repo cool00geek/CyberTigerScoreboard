@@ -7,19 +7,18 @@ import java.net.URL;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class MySQLServerHelper implements IServerHelper {
-	private boolean status = false;
-	private String connUrl;
-	@Override
-	public void startServer(String dbUrl, String dbName, String username, String password, CPscorereport scorer)
-			throws SQLException {
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			connUrl="jdbc:mysql://"+dbUrl+"/"+dbName+"?user="+username+"&password="+password;
-			DriverManager.getConnection(connUrl);
-			scorer.refreshData();
-			
-		} catch (ClassNotFoundException|SQLException|IOException e) {
+public class MySQLServerHelper extends ServerHelper {
+
+    @Override
+    public void startServer(String dbUrl, String dbName, String username, String password, CPscorereport scorer)
+            throws SQLException {
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            connUrl = "jdbc:mysql://" + dbUrl + "/" + dbName + "?user=" + username + "&password=" + password;
+            DriverManager.getConnection(connUrl);
+            scorer.refreshData();
+
+        } catch (ClassNotFoundException | SQLException | IOException e) {
             String error = "An error has occured:\n" + e.getMessage(); // Show them error stuff
             error += "\nIt is possible that your IP is blacklisted!";
             try {
@@ -31,35 +30,13 @@ public class MySQLServerHelper implements IServerHelper {
             } catch (IOException ex1) { // We couldn't get an internet connection
                 error = "There was an error generating the error! Please check your internet connection:\n" + ex1; // Tell them we couldnt generate the error
             }
-            status = false; // Since we're catching it, something didn't run, so stop it
+            myStatus = false; // Since we're catching it, something didn't run, so stop it
             throw new SQLException(error); // Throw the error
-		}
-		
+        }
+    }
 
-	}
-
-	@Override
-	public void stopServer() {
-		status=false;
-	}
-
-	@Override
-	public boolean isRunning() {
-		return status;
-	}
-
-	@Override
-	public String getURL() {
-		if (status) {
-			return connUrl;
-		} else {
-			return "";
-		}
-	}
-
-	@Override
-	public IDatabaseConnection newDbConn() {
-		return new MySQLDatabaseConnection();
-	}
-
+    @Override
+    public IDatabaseConnection newDbConn() {
+        return new MySQLDatabaseConnection();
+    }
 }

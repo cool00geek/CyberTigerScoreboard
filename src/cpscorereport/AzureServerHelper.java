@@ -14,22 +14,16 @@ import java.sql.SQLException;
  *
  * @author 054457
  */
-public class AzureServerHelper implements IServerHelper {
+public class AzureServerHelper extends ServerHelper {
 
-    private String connUrl; // Hold the connection URL
-    private boolean myAzureStatus; // Check if it's running or not
-
-    public AzureServerHelper() {
-        myAzureStatus = false; // Since we're just starting it, it will be false
-    }
-
+    @Override
     public void startServer(String dbUrl, String dbName, String username, String password, CPscorereport scorer) throws SQLException {
-        
-    	try {
+
+        try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver"); // Set the class to connect
             connUrl = "jdbc:sqlserver://" + dbUrl + ";database=" + dbName + ";user=" + username + "@ctsb;password=" + password + ";encrypt=true;trustServerCertificate=true;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
             DriverManager.getConnection(connUrl); // Get the URL to connect
-            myAzureStatus = true; // Now that it's started...
+            myStatus = true; // Now that it's started...
             scorer.refreshData(); // Refresh data
         } catch (ClassNotFoundException | SQLException | IOException ex) { // Something happened
             String error = "An error has occured:\n" + ex.getMessage(); // Show them error stuff
@@ -43,28 +37,13 @@ public class AzureServerHelper implements IServerHelper {
             } catch (IOException ex1) { // We couldn't get an internet connection
                 error = "There was an error generating the error! Please check your internet connection:\n" + ex1; // Tell them we couldnt generate the error
             }
-            myAzureStatus = false; // Since we're catching it, something didn't run, so stop it
+            myStatus = false; // Since we're catching it, something didn't run, so stop it
             throw new SQLException(error); // Throw the error
         }
     }
 
-    public void stopServer() {
-        myAzureStatus = false; // Just set it to false
+    @Override
+    public IDatabaseConnection newDbConn() {
+        return new AzureDatabaseConnection();
     }
-
-    public String getURL() {
-        if (connUrl != null) { // If it has been initialized
-            return connUrl; // Return it
-        }
-        return ""; // Otherwise, just return it as an empty string
-    }
-
-    public boolean isRunning() { // Check if it's running
-        return myAzureStatus; // Send out the status
-    }
-
-	@Override
-	public IDatabaseConnection newDbConn() {
-		return new AzureDatabaseConnection();
-	}
 }

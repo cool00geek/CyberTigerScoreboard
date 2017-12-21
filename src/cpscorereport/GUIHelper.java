@@ -24,13 +24,13 @@ public class GUIHelper {
 
     private String myAzureDBUser; // The database username
     private String myAzureDBPass; // The DB password
-    private IServerHelper myServerHelp; // The server helper for the GUI Helper
+    private ServerHelper myServerHelp; // The server helper for the GUI Helper
     private final CPscorereport myScorer; // The scorer to refresh if required
 
     public GUIHelper(CPscorereport scorer) {
         myAzureDBUser = ""; // Initialize variables
         myAzureDBPass = "";
-        myServerHelp = new DummyServerHelper();
+        myServerHelp = new ServerHelper();
         myScorer = scorer; // Make sure it already exists
     }
 
@@ -40,7 +40,7 @@ public class GUIHelper {
         Menu serverMenu = new Menu("Server"); // Create the server tab
         Menu helpMenu = new Menu("Help"); // Add the file tab
 
-        MenuItem startAz = new MenuItem("Start Azure server"); // Have an option to start the Azure server 
+        MenuItem startAz = new MenuItem("Start Azure server"); // Have an option to start the Azure server
         startAz.setOnAction((ActionEvent t) -> {
             if (myServerHelp.isRunning()) { // If it's already running,
                 textbox.setText("Server already running!"); // Tell them
@@ -69,7 +69,7 @@ public class GUIHelper {
             Optional<String> result2 = dbName.showAndWait(); // Get the result
             String DBn; // String to hold it
             if (result2.isPresent()) { // Check if they hit ok or cancel
-                DBn = result2.get(); // Get it 
+                DBn = result2.get(); // Get it
             } else {
                 textbox.setText("Azure server not running!"); // Tell them it isn't running
                 return; // Exit
@@ -100,7 +100,7 @@ public class GUIHelper {
             textbox.setText("Starting Azure server..."); // Let them know we're trying to start
             try {
                 myServerHelp = new AzureServerHelper();
-            	myServerHelp.startServer(DBUrl, DBn, myAzureDBUser, myAzureDBPass, myScorer); // Start it
+                myServerHelp.startServer(DBUrl, DBn, myAzureDBUser, myAzureDBPass, myScorer); // Start it
                 textbox.setText("Azure Server started!"); // Tell them it started
             } catch (SQLException ex) { // We would have an exception otherwise
                 textbox.setText("Starting azure server failed!"); // Dialog to tell them it didn't work
@@ -112,7 +112,7 @@ public class GUIHelper {
             }
         });
 
-        MenuItem startMy = new MenuItem("Start MySQL server"); // Have an option to start the Azure server 
+        MenuItem startMy = new MenuItem("Start MySQL server"); // Have an option to start the Azure server
         startMy.setOnAction((ActionEvent t) -> {
             if (myServerHelp.isRunning()) { // If it's already running,
                 textbox.setText("Server already running!"); // Tell them
@@ -141,7 +141,7 @@ public class GUIHelper {
             Optional<String> result2 = dbName.showAndWait(); // Get the result
             String DBn; // String to hold it
             if (result2.isPresent()) { // Check if they hit ok or cancel
-                DBn = result2.get(); // Get it 
+                DBn = result2.get(); // Get it
             } else {
                 textbox.setText("MySQL server not running!"); // Tell them it isn't running
                 return; // Exit
@@ -172,7 +172,7 @@ public class GUIHelper {
             textbox.setText("Starting MySQL server..."); // Let them know we're trying to start
             try {
                 myServerHelp = new MySQLServerHelper();
-            	myServerHelp.startServer(DBUrl, DBn, myAzureDBUser, myAzureDBPass, myScorer); // Start it
+                myServerHelp.startServer(DBUrl, DBn, myAzureDBUser, myAzureDBPass, myScorer); // Start it
                 textbox.setText("MySQL Server started!"); // Tell them it started
             } catch (SQLException ex) { // We would have an exception otherwise
                 textbox.setText("Starting MySQL server failed!"); // Dialog to tell them it didn't work
@@ -184,9 +184,6 @@ public class GUIHelper {
             }
         });
 
-
-
-     
         MenuItem refreshItem = new MenuItem("Refresh data"); // Get the refresh button
         refreshItem.setOnAction((ActionEvent t) -> {
             if (myServerHelp.isRunning()) { // Make sure it's running
@@ -214,7 +211,7 @@ public class GUIHelper {
                 textbox.setText("DB server not running!"); // It already isn't running!
             }
         });
-        
+
         MenuItem export = new MenuItem("Export to xls"); // Export to excel
         export.setOnAction((ActionEvent t) -> {
             Alert alert = new Alert(AlertType.INFORMATION); // Show an alert
@@ -236,13 +233,13 @@ public class GUIHelper {
             alert.setTitle("About CyberTiger Scoreboard"); // About it
             alert.setHeaderText("About the CyberTiger Scoreboard"); // About
             alert.setContentText("Created by @billwi and @hexalellogram for the VHS CyberPatriot team!\nShoutout to Mr. Osborne for running CyberPatriot, Irvin for guiding us, and Mr. Parker for giving us the knowledge to create this scoreboard!\n\nThis is licensed under the GNU/GPL V3 Public license!");
-            alert.showAndWait(); // Show them 
+            alert.showAndWait(); // Show them
         });
 
         fileMenu.getItems().addAll(export, quit); // Add the items to the about button
         serverMenu.getItems().addAll(startAz, startMy, refreshItem, stopDB); // Add the items to the server option
         helpMenu.getItems().addAll(about); // Add it to the about section
-        
+
         menuBar.getMenus().addAll(fileMenu, serverMenu, helpMenu); // Add all options to the menu
         return menuBar; // Give the bar
     }
@@ -255,9 +252,9 @@ public class GUIHelper {
     }
 
     public boolean isDBRunning() {
-    	if(myServerHelp==null){
-    		return false;
-    	}
+        if (myServerHelp == null) {
+            return false;
+        }
         return myServerHelp.isRunning();
     }
 
@@ -268,7 +265,7 @@ public class GUIHelper {
         return text; // Give it to them
     }
 
-	public IDatabaseConnection newDbConn() {
-		return myServerHelp.newDbConn();
-	}
+    public IDatabaseConnection newDbConn() {
+        return myServerHelp.newDbConn();
+    }
 }
