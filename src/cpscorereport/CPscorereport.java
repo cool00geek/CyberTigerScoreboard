@@ -1,5 +1,5 @@
 /*
- * GNU/GPL v3. Check out https://github.com/billwi/CyberTigerScoreboard for more info
+ * GNU/GPL v3. Check out https://github.com/cool00geek/CyberTigerScoreboard for more info
  */
 package cpscorereport;
 
@@ -30,7 +30,7 @@ import javafx.util.Duration;
 
 /**
  *
- * @author Vinay/@billwi
+ * @author Vinay/@cool00geek
  */
 public class CPscorereport extends Application {
 
