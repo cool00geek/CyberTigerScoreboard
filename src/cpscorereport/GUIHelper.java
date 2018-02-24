@@ -1,5 +1,5 @@
 /*
- * GNU/GPL v3. Check out https://github.com/billwi/CyberTigerScoreboard for more info
+ * GNU/GPL v3. Check out https://github.com/cool00geek/CyberTigerScoreboard for more info
  */
 package cpscorereport;
 
@@ -18,7 +18,7 @@ import javafx.scene.text.Text;
 
 /**
  *
- * @author Vinay
+ * @author @cool00geek
  */
 public class GUIHelper {
 
@@ -232,7 +232,7 @@ public class GUIHelper {
             Alert alert = new Alert(AlertType.INFORMATION); // Make it info
             alert.setTitle("About CyberTiger Scoreboard"); // About it
             alert.setHeaderText("About the CyberTiger Scoreboard"); // About
-            alert.setContentText("Created by @billwi and @hexalellogram for the VHS CyberPatriot team!\nShoutout to Mr. Osborne for running CyberPatriot, Irvin for guiding us, and Mr. Parker for giving us the knowledge to create this scoreboard!\n\nThis is licensed under the GNU/GPL V3 Public license!");
+            alert.setContentText("Created by @cool00geek and @hexalellogram for the VHS CyberPatriot team!\nShoutout to Mr. Osborne for running CyberPatriot, Irvin for guiding us, and Mr. Parker for giving us the knowledge to create this scoreboard!\n\nThis is licensed under the GNU/GPL V3 Public license!");
             alert.showAndWait(); // Show them
         });
 
