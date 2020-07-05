@@ -7,6 +7,10 @@ This was created to allow students at my High School to better prepare for the C
 ## Usage
 The images should be using a Microsoft SQL command line tool on a loop or startup job or daemon to simply client side setup. Here, you simply need to go to `Server --> Start Azure server` and follow the prompts to get started
 
+## Demo
+
+[Youtube Link](https://youtu.be/TiNSWCAyXwM)
+
 ## Pics
 ### Mockup
 ![Mockup](/res/mockup.png)
